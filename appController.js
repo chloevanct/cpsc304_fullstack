@@ -4,6 +4,18 @@ const appService = require('./appService');
 const router = express.Router();
 
 // ----------------------------------------------------------
+
+router.get('/animals', async (req, res) => {
+    try {
+        const animals = await appService.getAnimals();
+        res.json({rows: animals});
+    } catch (err) {
+        console.log("error getting animal table");
+    }
+});
+
+
+
 // API endpoints
 // Modify or extend these routes based on your project's needs.
 router.get('/check-db-connection', async (req, res) => {
@@ -17,7 +29,7 @@ router.get('/check-db-connection', async (req, res) => {
 
 router.get('/demotable', async (req, res) => {
     const tableContent = await appService.fetchDemotableFromDb();
-    res.json({data: tableContent});
+    res.json({ data: tableContent });
 });
 
 router.post("/initiate-demotable", async (req, res) => {
@@ -52,13 +64,13 @@ router.post("/update-name-demotable", async (req, res) => {
 router.get('/count-demotable', async (req, res) => {
     const tableCount = await appService.countDemotable();
     if (tableCount >= 0) {
-        res.json({ 
-            success: true,  
+        res.json({
+            success: true,
             count: tableCount
         });
     } else {
-        res.status(500).json({ 
-            success: false, 
+        res.status(500).json({
+            success: false,
             count: tableCount
         });
     }

@@ -11,6 +11,17 @@ const dbConfig = {
 };
 
 
+async function getAnimals() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM AnimalAdmits');
+        console.log(result);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+
 // ----------------------------------------------------------
 // Wrapper to manage OracleDB actions, simplifying connection handling.
 async function withOracleDB(action) {
@@ -116,5 +127,6 @@ module.exports = {
     initiateDemotable, 
     insertDemotable, 
     updateNameDemotable, 
-    countDemotable
+    countDemotable,
+    getAnimals
 };
