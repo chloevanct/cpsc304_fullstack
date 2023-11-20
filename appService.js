@@ -21,6 +21,60 @@ async function getAnimals() {
     });
 }
 
+async function getApplications() {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute('SELECT * FROM Applies');
+        console.log(result);
+        return result.rows;
+    }).catch(() => {
+        return [];
+    });
+}
+
+async function submitApplication(branchID, adopterID, animalID, applicationStatus, applicationDate) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `INSERT INTO Applies(branchID, adopterID, animalID, applicationStatus, applicationDate) 
+            VALUES(:branchID, :adopterID, :animalID, :applicationStatus, TO_DATE(:applicationDate, 'YYYY-MM-DD'))`,
+            { branchID, adopterID, animalID, applicationStatus, applicationDate },
+            { autoCommit: true }
+        );
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function withdrawApplication(branchID, adopterID, animalID) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `DELETE FROM Applies 
+             WHERE branchID = :branchID AND adopterID = :adopterID AND animalID = :animalID`,
+            { branchID, adopterID, animalID },
+            { autoCommit: true }
+        );
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
+async function updateApplication(branchID, adopterID, animalID, applicationStatus, applicationDate) {
+    return await withOracleDB(async (connection) => {
+        const result = await connection.execute(
+            `UPDATE Applies 
+             SET applicationStatus = :applicationStatus,
+                 applicationDate = TO_DATE(:applicationDate, 'YYYY-MM-DD')
+             WHERE branchID = :branchID AND adopterID = :adopterID AND animalID = :animalID`,
+            { branchID, adopterID, animalID, applicationStatus, applicationDate },
+            { autoCommit: true }
+        );
+        return result.rowsAffected && result.rowsAffected > 0;
+    }).catch(() => {
+        return false;
+    });
+}
+
 
 // ----------------------------------------------------------
 // Wrapper to manage OracleDB actions, simplifying connection handling.
@@ -128,5 +182,9 @@ module.exports = {
     insertDemotable, 
     updateNameDemotable, 
     countDemotable,
-    getAnimals
+    getAnimals,
+    getApplications,
+    submitApplication,
+    withdrawApplication,
+    updateApplication
 };
