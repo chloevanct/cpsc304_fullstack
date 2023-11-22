@@ -13,9 +13,9 @@ const dbConfig = {
 async function getAnimals() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      "SELECT * FROM AnimalInfo i, AnimalAdmits a WHERE i.breed = a.breed"
+      "SELECT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i, AnimalAdmits a WHERE i.breed = a.breed"
     );
-    console.log(result);
+    // console.log(result);
     return result.rows;
   }).catch(() => {
     return [];
