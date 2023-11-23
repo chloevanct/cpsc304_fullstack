@@ -36,6 +36,9 @@ async function checkDbConnection() {
     });
 }
 
+/**
+ * ANIMALS TABLE --------------------------------------------------------------
+ */
 // Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
 async function fetchAndDisplayAnimals() {
   const tableElement = document.getElementById("animaltable");
@@ -93,7 +96,6 @@ async function getVaccinations() {
 }
 
 function getVaccinationCount(animalID, vaccinationTable) {
-  console.log("animalID: ", animalID);
 
   for (const row of vaccinationTable) {
     if (row[0] === animalID) {
@@ -103,7 +105,146 @@ function getVaccinationCount(animalID, vaccinationTable) {
   return 0;
 }
 
-// Fetches data from the demotable and displays it.
+/**
+ * APPLIES TABLE --------------------------------------------------------------
+ */
+// Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
+async function fetchAndDisplayApplications() {
+  const tableElement = document.getElementById("applicationsTable");
+  const tableBody = tableElement.querySelector("tbody");
+  const applicationTable = await getApplications();
+
+  // Always clear old, already fetched data before new fetching process.
+  if (tableBody) {
+    tableBody.innerHTML = "";
+  }
+
+  applicationTable.forEach((application) => {
+    const row = tableBody.insertRow();
+    application.forEach((field, index) => {
+      const cell = row.insertCell(index);
+      cell.textContent = field;
+    });
+  });
+}
+
+async function getApplications() {
+  const applicationsResponse = await fetch("/applications", {
+    method: "GET",
+  });
+  const animalResponseData = await applicationsResponse.json();
+  const animalTable = animalResponseData["rows"];
+
+  return animalTable;
+}
+
+// Inserts new records into the applies table.
+async function insertApplication(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("insertBranchID").value;
+  const adopterIDValue = document.getElementById("insertAdopterID").value;
+  const animalIDValue = document.getElementById("insertAnimalID").value;
+  const applicationStatusValue = document.getElementById("insertApplicationStatus").value;
+  const applicationDateValue = document.getElementById("insertApplicationDate").value;
+
+  const response = await fetch("/applications-submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      adopterID: adopterIDValue,
+      animalID: animalIDValue,
+      applicationStatus: applicationStatusValue,
+      applicationDate: applicationDateValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("insertApplicationResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Data inserted successfully!";
+    fetchTableData();
+  } else {
+    messageElement.textContent = "Error inserting data!";
+  }
+}
+
+// Deletes an application from the Applications Table
+async function deleteApplication(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("deleteBranchID").value;
+  const adopterIDValue = document.getElementById("deleteAdopterID").value;
+  const animalIDValue = document.getElementById("deleteAnimalID").value;
+
+  const response = await fetch("/applications-withdraw", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      adopterID: adopterIDValue,
+      animalID: animalIDValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("deleteApplicationResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Application deleted successfully!";
+    fetchTableData();
+  } else {
+    messageElement.textContent = "Error deleting application!";
+  }
+}
+
+// Updates status/date in the Applications table.
+async function updateApplication(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("updateBranchID").value;
+  const adopterIDValue = document.getElementById("updateAdopterID").value;
+  const animalIDValue = document.getElementById("updateAnimalID").value;
+  const newApplicationStatusValue = document.getElementById("updateApplicationStatus").value;
+  const newApplicationDateValue = document.getElementById("updateApplicationDate").value;
+
+  const response = await fetch("/applications-update", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      adopterID: adopterIDValue,
+      animalID: animalIDValue,
+      applicationStatus: newApplicationStatusValue,
+      applicationDate: newApplicationDateValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("updateApplicationResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Name updated successfully!";
+    fetchTableData();
+  } else {
+    messageElement.textContent = "Error updating name!";
+  }
+}
+
+
+/**
+ * DEMOTABLE STUFF -------------------------------------------------------------
+ */
+
+// Fetches data from the Applies database and displays it.
 async function fetchAndDisplayUsers() {
   const tableElement = document.getElementById("demotable");
   const tableBody = tableElement.querySelector("tbody");
@@ -228,6 +369,16 @@ window.onload = function () {
   checkDbConnection();
   fetchTableData();
   document
+    .getElementById("insertApplicationsTable")
+    .addEventListener("submit", insertApplication);
+  document
+    .getElementById("deleteApplicationsTable")
+    .addEventListener("submit", deleteApplication);
+  document
+    .getElementById("updateApplicationsTable")
+    .addEventListener("submit", updateApplication);
+
+  document
     .getElementById("resetDemotable")
     .addEventListener("click", resetDemotable);
   document
@@ -245,6 +396,7 @@ window.onload = function () {
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
   fetchAndDisplayAnimals();
+  fetchAndDisplayApplications();
   // legacy
   fetchAndDisplayUsers();
 }

@@ -32,9 +32,6 @@
     <hr />
     <br />
     <!-- ========================================================================= -->
-
-    <!-- Show 'Demotable'. 
-        Data will be fetched and inserted here dynamically using JavaScript. -->
     <h2>Animal Table</h2>
     <table id="animaltable" border="1">
       <thead>
@@ -56,6 +53,91 @@
     <hr />
     <br />
     <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
+
+    <h2>Applications Table</h2>
+    <table id="applicationsTable" border="1">
+      <thead>
+        <tr>
+          <th>branchID</th>
+          <th>adopterID</th>
+          <th>animalID</th>
+          <th>applicationStatus</th>
+          <th>applicationDate</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <br />
+    <hr />
+    <br />
+    <!-- ========================================================================= -->
+
+    <div style="display: flex; justify-content: space-around; align-items: start;">
+
+      <!-- Insert -->
+      <div>
+          <h2>Insert Values into Applications Table</h2>
+          <form id="insertApplicationsTable">
+            branchID: <input type="text" id="insertBranchID" placeholder="Enter branchID" maxlength="8" required />
+            <br /><br />
+            adopterID: <input type="text" id="insertAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
+            <br /><br />
+            animalID: <input type="text" id="insertAnimalID" placeholder="Enter branchID" maxlength="8" required/>
+            <br /><br />
+            applicationStatus: <input type="text" id="insertApplicationStatus" placeholder="Enter Application Status" maxlength="200"/>
+            <br /><br />
+            applicationDate: <input type="text" id="insertApplicationDate" placeholder="YYYY-MM-DD" maxlength="200"/>
+            <br /><br />
+            <button type="submit">insert</button> <br />
+          </form>
+          <div id="insertApplicationResultMsg"></div>
+      </div>
+  
+      <!-- Delete -->
+      <div>
+          <h2>Delete Values from Applications Table</h2>
+          <form id="deleteApplicationsTable">
+            branchID: <input type="text" id="deleteBranchID" placeholder="Enter branchID" maxlength="8" required />
+            <br /><br />
+            adopterID: <input type="text" id="deleteAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
+            <br /><br />
+            animalID: <input type="text" id="deleteAnimalID" placeholder="Enter branchID" maxlength="8" required/>
+            <br /><br />
+            <button type="submit">delete</button> <br />
+          </form>
+          <div id="deleteApplicationResultMsg"></div>
+      </div>
+
+      <!-- Update -->
+      <div>
+        <h2>Update Values from Applications Table</h2>
+        <form id="updateApplicationsTable">
+          branchID: <input type="text" id="updateBranchID" placeholder="Enter branchID" maxlength="8" required />
+          <br /><br />
+          adopterID: <input type="text" id="updateAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
+          <br /><br />
+          animalID: <input type="text" id="updateAnimalID" placeholder="Enter branchID" maxlength="8" required/>
+          <br /><br />
+          new applicationStatus: <input type="text" id="updateApplicationStatus" placeholder="Enter Application Status" maxlength="200"/>
+          <br /><br />
+          new applicationDate: <input type="text" id="updateApplicationDate" placeholder="YYYY-MM-DD" maxlength="200"/>
+          <br /><br />
+          <button type="submit">update</button> <br />
+        </form>
+        <div id="updateApplicationResultMsg"></div>
+    </div>
+  
+  </div>
+  <br />
+  <hr />
+  <br />
+
+    <!-- ========================================================================= -->
+
+
 
     <!-- Show 'Demotable'. 
         Data will be fetched and inserted here dynamically using JavaScript. -->
