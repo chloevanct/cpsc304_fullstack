@@ -75,69 +75,179 @@
     <br />
     <!-- ========================================================================= -->
 
-    <div style="display: flex; justify-content: space-around; align-items: start;">
-
+    <div
+      style="display: flex; justify-content: space-around; align-items: start"
+    >
       <!-- Insert -->
       <div>
-          <h2>Insert Values into Applications Table</h2>
-          <form id="insertApplicationsTable">
-            branchID: <input type="text" id="insertBranchID" placeholder="Enter branchID" maxlength="8" required />
-            <br /><br />
-            adopterID: <input type="text" id="insertAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
-            <br /><br />
-            animalID: <input type="text" id="insertAnimalID" placeholder="Enter branchID" maxlength="8" required/>
-            <br /><br />
-            applicationStatus: <input type="text" id="insertApplicationStatus" placeholder="Enter Application Status" maxlength="200"/>
-            <br /><br />
-            applicationDate: <input type="text" id="insertApplicationDate" placeholder="YYYY-MM-DD" maxlength="200"/>
-            <br /><br />
-            <button type="submit">insert</button> <br />
-          </form>
-          <div id="insertApplicationResultMsg"></div>
+        <h2>Insert Values into Applications Table</h2>
+        <form id="insertApplicationsTable">
+          branchID:
+          <input
+            type="text"
+            id="insertBranchID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          adopterID:
+          <input
+            type="text"
+            id="insertAdopterID"
+            placeholder="Enter adopterID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          animalID:
+          <input
+            type="text"
+            id="insertAnimalID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          applicationStatus:
+          <input
+            type="text"
+            id="insertApplicationStatus"
+            placeholder="Enter Application Status"
+            maxlength="200"
+          />
+          <br /><br />
+          applicationDate:
+          <input
+            type="text"
+            id="insertApplicationDate"
+            placeholder="YYYY-MM-DD"
+            maxlength="200"
+          />
+          <br /><br />
+          <button type="submit">insert</button> <br />
+        </form>
+        <div id="insertApplicationResultMsg"></div>
       </div>
-  
+
       <!-- Delete -->
       <div>
-          <h2>Delete Values from Applications Table</h2>
-          <form id="deleteApplicationsTable">
-            branchID: <input type="text" id="deleteBranchID" placeholder="Enter branchID" maxlength="8" required />
-            <br /><br />
-            adopterID: <input type="text" id="deleteAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
-            <br /><br />
-            animalID: <input type="text" id="deleteAnimalID" placeholder="Enter branchID" maxlength="8" required/>
-            <br /><br />
-            <button type="submit">delete</button> <br />
-          </form>
-          <div id="deleteApplicationResultMsg"></div>
+        <h2>Delete Values from Applications Table</h2>
+        <form id="deleteApplicationsTable">
+          branchID:
+          <input
+            type="text"
+            id="deleteBranchID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          adopterID:
+          <input
+            type="text"
+            id="deleteAdopterID"
+            placeholder="Enter adopterID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          animalID:
+          <input
+            type="text"
+            id="deleteAnimalID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          <button type="submit">delete</button> <br />
+        </form>
+        <div id="deleteApplicationResultMsg"></div>
       </div>
 
       <!-- Update -->
       <div>
         <h2>Update Values from Applications Table</h2>
         <form id="updateApplicationsTable">
-          branchID: <input type="text" id="updateBranchID" placeholder="Enter branchID" maxlength="8" required />
+          branchID:
+          <input
+            type="text"
+            id="updateBranchID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
           <br /><br />
-          adopterID: <input type="text" id="updateAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
+          adopterID:
+          <input
+            type="text"
+            id="updateAdopterID"
+            placeholder="Enter adopterID"
+            maxlength="8"
+            required
+          />
           <br /><br />
-          animalID: <input type="text" id="updateAnimalID" placeholder="Enter branchID" maxlength="8" required/>
+          animalID:
+          <input
+            type="text"
+            id="updateAnimalID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
           <br /><br />
-          new applicationStatus: <input type="text" id="updateApplicationStatus" placeholder="Enter Application Status" maxlength="200"/>
+          new applicationStatus:
+          <input
+            type="text"
+            id="updateApplicationStatus"
+            placeholder="Enter Application Status"
+            maxlength="200"
+          />
           <br /><br />
-          new applicationDate: <input type="text" id="updateApplicationDate" placeholder="YYYY-MM-DD" maxlength="200"/>
+          new applicationDate:
+          <input
+            type="text"
+            id="updateApplicationDate"
+            placeholder="YYYY-MM-DD"
+            maxlength="200"
+          />
           <br /><br />
           <button type="submit">update</button> <br />
         </form>
         <div id="updateApplicationResultMsg"></div>
+      </div>
     </div>
-  
-  </div>
-  <br />
-  <hr />
-  <br />
+    <br />
+    <hr />
+    <br />
+
+    <!-- HTML file -->
+    <!DOCTYPE html>
+    <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Your Web App</title>
+      </head>
+      <body>
+        <label for="tableDropdown">Select Table:</label>
+        <select id="tableDropdown"></select>
+
+        <label for="attributeDropdown">Select Attribute:</label>
+        <select id="attributeDropdown" multiple></select>
+
+        <!-- Other HTML content -->
+
+        <script src="scripts.js"></script>
+      </body>
+    </html>
+
+    <table id="projectionResultTable" border="1">
+      <!-- The result will be dynamically populated using JavaScript -->
+    </table>
 
     <!-- ========================================================================= -->
-
-
 
     <!-- Show 'Demotable'. 
         Data will be fetched and inserted here dynamically using JavaScript. -->

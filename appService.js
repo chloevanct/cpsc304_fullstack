@@ -72,6 +72,18 @@ async function getEvents() {
   });
 }
 
+async function getTableNames() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      "SELECT title, eventLocation, eventDate FROM Events"
+    );
+    console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function getApplications() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT * FROM Applies");
