@@ -408,5 +408,6 @@ INSERT INTO Applies(branchID, adopterID, animalID, applicationStatus, applicatio
 INSERT INTO Applies(branchID, adopterID, animalID, applicationStatus, applicationDate) 
 		VALUES('12345678', '103', '1', 'Pending', TO_DATE('2021-10-31', 'YYYY-MM-DD'));
 INSERT INTO Applies(branchID, adopterID, animalID, applicationStatus, applicationDate) 
-    VALUES('12345678', '104', '1', 'Pending', TO_DATE('2020-9-30', 'YYYY-MM-DD'));
+    VALUES('12345678', '104', '1', 'Accepted', TO_DATE('2020-9-30', 'YYYY-MM-DD'));
+
 

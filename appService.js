@@ -11,10 +11,10 @@ const dbConfig = {
 };
 
 async function getAnimals() {
+  const query =
+    "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed LEFT JOIN Applies ap ON a.animalID = ap.animalID AND ap.applicationStatus <> 'Approved'";
   return await withOracleDB(async (connection) => {
-    const result = await connection.execute(
-      "SELECT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i, AnimalAdmits a WHERE i.breed = a.breed"
-    );
+    const result = await connection.execute(query);
     // console.log(result);
     return result.rows;
   }).catch(() => {

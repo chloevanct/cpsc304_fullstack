@@ -48,15 +48,6 @@ async function fetchAndDisplayAnimals() {
   const animalTable = await getAnimals();
   const vaccinationTable = await getVaccinations();
 
-  //   console.log(vaccinationTable);
-
-  //   const vaccinationResponse = await fetch("/vaccinations", {
-  //     method: "GET",
-  //   });
-  //   const vaccinationResponseData = await vaccinationResponse.json();
-  //   const vaccinationTable = vaccinationResponseData["rows"];
-  //   console.log(vaccinationTable);
-
   // Always clear old, already fetched data before new fetching process.
   if (tableBody) {
     tableBody.innerHTML = "";
@@ -93,8 +84,6 @@ async function getVaccinations() {
 }
 
 function getVaccinationCount(animalID, vaccinationTable) {
-  console.log("animalID: ", animalID);
-
   for (const row of vaccinationTable) {
     if (row[0] === animalID) {
       return row[1];
@@ -225,7 +214,7 @@ async function countDemotable() {
 
 // Function to fill the dropdown lists
 function fillDropdownLists() {
-  const tableColumns = {
+  let tableColumns = {
     Donor: ["donorID", "lastName", "firstName"],
     Events: ["eventLocation", "eventDate", "title", "eventType"],
     Shelter: ["branchID", "phoneNum", "shelterAddress"],
@@ -257,7 +246,6 @@ function fillDropdownLists() {
       "applicationDate",
     ],
   };
-
   const tableDropdown = document.getElementById("tableDropdown");
   const attributeDropdown = document.getElementById("attributeDropdown");
 
@@ -283,7 +271,7 @@ function fillDropdownLists() {
   });
 }
 
-window.onload = fillDropdownLists;
+// window.onload = fillDropdownLists;
 
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
@@ -291,6 +279,7 @@ window.onload = fillDropdownLists;
 window.onload = function () {
   checkDbConnection();
   fetchTableData();
+  fillDropdownLists();
   document
     .getElementById("resetDemotable")
     .addEventListener("click", resetDemotable);
