@@ -7,6 +7,15 @@ const bodyParser = require("body-parser");
 
 // ----------------------------------------------------------
 
+router.get("/available-animals", async (req, res) => {
+  try {
+    const animals = await appService.getAvailableAnimals();
+    res.json({ rows: animals });
+  } catch (err) {
+    console.log("error getting available animals for adoption table");
+  }
+});
+
 router.get("/animals", async (req, res) => {
   try {
     const animals = await appService.getAnimals();
@@ -43,10 +52,30 @@ router.get("/applications", async (req, res) => {
   }
 });
 
+router.get("/top-donors", async (req, res) => {
+  try {
+    const donors = await appService.getTopDonors();
+    res.json({ rows: donors });
+  } catch (err) {
+    console.log("error getting available donors for top donors table");
+  }
+});
+
+router.get("/donors-attend-all-events", async (req, res) => {
+  try {
+    const donors = await appService.getDonorsWhoAttendAllEvents();
+    res.json({ rows: donors });
+  } catch (err) {
+    console.log("error getting donors who attended all events table");
+  }
+});
+
 router.put("/projection", async (req, res) => {
   try {
     const { table_name, attributes } = req.body;
+
     const table = await appService.getTable(table_name, attributes);
+    // console.log(table);
     res.json(table);
   } catch (err) {
     console.log("error processing projection query:", err);

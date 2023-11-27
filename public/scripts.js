@@ -36,9 +36,30 @@ async function checkDbConnection() {
     });
 }
 
-/**
- * ANIMALS TABLE --------------------------------------------------------------
- */
+// fetch and display available animals for adoption (nested aggregation with group by query)
+async function fetchAndDisplayAvailableAnimals() {
+  const tableElement = document.getElementById("animalsAvailableTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/available-animals", {
+    method: "GET",
+  });
+  const animalsData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  animalsData.rows.forEach(animal => {
+    const row = tableBody.insertRow();
+    animal.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
 // Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
 async function fetchAndDisplayAnimals() {
   const tableElement = document.getElementById("animaltable");
@@ -50,15 +71,6 @@ async function fetchAndDisplayAnimals() {
   //   const animalResponseData = await animalResponse.json();
   const animalTable = await getAnimals();
   const vaccinationTable = await getVaccinations();
-
-  //   console.log(vaccinationTable);
-
-  //   const vaccinationResponse = await fetch("/vaccinations", {
-  //     method: "GET",
-  //   });
-  //   const vaccinationResponseData = await vaccinationResponse.json();
-  //   const vaccinationTable = vaccinationResponseData["rows"];
-  //   console.log(vaccinationTable);
 
   // Always clear old, already fetched data before new fetching process.
   if (tableBody) {
@@ -96,7 +108,6 @@ async function getVaccinations() {
 }
 
 function getVaccinationCount(animalID, vaccinationTable) {
-
   for (const row of vaccinationTable) {
     if (row[0] === animalID) {
       return row[1];
@@ -104,6 +115,7 @@ function getVaccinationCount(animalID, vaccinationTable) {
   }
   return 0;
 }
+
 
 /**
  * APPLIES TABLE --------------------------------------------------------------
@@ -240,11 +252,7 @@ async function updateApplication(event) {
 }
 
 
-/**
- * DEMOTABLE STUFF -------------------------------------------------------------
- */
-
-// Fetches data from the Applies database and displays it.
+// Fetches data from the demotable and displays it.
 async function fetchAndDisplayUsers() {
   const tableElement = document.getElementById("demotable");
   const tableBody = tableElement.querySelector("tbody");
@@ -362,12 +370,123 @@ async function countDemotable() {
   }
 }
 
+// Define the table attributes dictionary
+
+// Function to fill the dropdown lists
+function fillDropdownLists() {
+  let tables = {
+    Donor: ["donorID", "lastName", "firstName"],
+    Events: ["eventLocation", "eventDate", "title", "eventType"],
+    Shelter: ["branchID", "phoneNum", "shelterAddress"],
+    InventoryHolds: ["invID", "branchID", "quantity", "invType"],
+    Staff: ["staffID", "lastName", "firstName", "startDate", "phoneNum"],
+    Volunteer: ["staffID", "volunteerHours"],
+    SalaryRanges: ["position", "salary"],
+    Employee: ["staffID", "position"],
+    AnimalInfo: ["breed", "species"],
+    AnimalAdmits: [
+      "animalID",
+      "breed",
+      "animalName",
+      "age",
+      "dateAdmit",
+      "branchID",
+    ],
+    Adopters: ["adopterID", "lastName", "firstName", "phoneNum"],
+    Vaccination: ["vacType", "vacDate", "animalID"],
+    Attends: ["donorID", "attendsLocation", "attendsDate", "title"],
+    Donates: ["donorID", "branchID", "donationDate", "amount"],
+    Plans: ["plansLocation", "plansDate", "title", "branchID"],
+    Employs: ["staffID", "branchID", "contractID"],
+    Applies: [
+      "branchID",
+      "adopterID",
+      "animalID",
+      "applicationStatus",
+      "applicationDate",
+    ],
+  };
+  const tableDropdown = document.getElementById("tableDropdown");
+  const attributeDropdown = document.getElementById("attributeDropdown");
+
+  for (const table in tables) {
+    const option = document.createElement("option");
+    option.value = table;
+    option.text = table;
+    tableDropdown.add(option);
+  }
+
+  tableDropdown.addEventListener("change", () => {
+    const selectedTable = tableDropdown.value;
+    const attributes = tables[selectedTable] || [];
+    attributeDropdown.innerHTML = "";
+    for (const attribute of attributes) {
+      const option = document.createElement("option");
+      option.value = attribute;
+      option.text = attribute;
+      attributeDropdown.add(option);
+    }
+    attributeDropdown.multiple = true;
+  });
+}
+
+// fetch and display top donors (aggregation with having query)
+async function fetchAndDisplayTopDonors() {
+  const tableElement = document.getElementById("topDonorsTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/top-donors", {
+    method: "GET",
+  });
+  const donorData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  donorData.rows.forEach(donor => {
+    const row = tableBody.insertRow();
+    donor.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+// fetch and display donors who've attend all events (divison query)
+async function fetchAndDisplayDonorsWhoAttendedAllEvents() {
+  const tableElement = document.getElementById("donorsAttendedAllEventsTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/donors-attend-all-events", {
+    method: "GET",
+  });
+  const donorData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  donorData.rows.forEach(donor => {
+    const row = tableBody.insertRow();
+    donor.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+
+
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
 // Add or remove event listeners based on the desired functionalities.
 window.onload = function () {
   checkDbConnection();
   fetchTableData();
+  fillDropdownLists();
   document
     .getElementById("insertApplicationsTable")
     .addEventListener("submit", insertApplication);
@@ -377,7 +496,9 @@ window.onload = function () {
   document
     .getElementById("updateApplicationsTable")
     .addEventListener("submit", updateApplication);
-
+  document
+  .getElementById("fetchAvailableAnimals")
+  .addEventListener("click", fetchAndDisplayAvailableAnimals);
   document
     .getElementById("resetDemotable")
     .addEventListener("click", resetDemotable);
@@ -390,7 +511,81 @@ window.onload = function () {
   document
     .getElementById("countDemotable")
     .addEventListener("click", countDemotable);
+  document
+    .getElementById("displayProjectionTable")
+    .addEventListener("click", displayProjectionTable);
+  document
+    .getElementById("displayTopDonors")
+    .addEventListener("click", fetchAndDisplayTopDonors);
+  document 
+    .getElementById("displayDonorsAttendedEveryEvent")
+    .addEventListener("click", fetchAndDisplayDonorsWhoAttendedAllEvents)
 };
+async function displayProjectionTable() {
+  const tableName = document.getElementById("tableDropdown").value;
+
+  const dropdown = document.getElementById("attributeDropdown");
+  const selectedOptions = Array.from(dropdown.selectedOptions).map(
+    (option) => option.value
+  );
+  const rows = getProjectionTable();
+
+  if (selectedOptions.length > 0) {
+    try {
+      const tableData = await getProjectionTable(tableName, selectedOptions);
+      const table = document.getElementById("projectionResultTable");
+
+      table.innerHTML = "";
+      const headerRow = table.insertRow();
+      for (const attribute of selectedOptions) {
+        const headerCell = headerRow.insertCell();
+        headerCell.textContent = attribute;
+      }
+
+      // Populate table values
+      for (const rowValues of tableData) {
+        const row = table.insertRow();
+        for (const rowValue of rowValues) {
+          const cell = row.insertCell();
+          cell.textContent = rowValue;
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  }
+}
+
+async function getProjectionTable() {
+  const tableName = document.getElementById("tableDropdown").value;
+  const dropdown = document.getElementById("attributeDropdown");
+  const selectedOptions = Array.from(dropdown.selectedOptions).map(
+    (option) => option.value
+  );
+
+  if (selectedOptions.length > 0) {
+    try {
+      const response = await fetch("/projection", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          table_name: tableName,
+          attributes: selectedOptions,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Error retrieving Projection table data!`);
+      }
+      const responseData = await response.json();
+
+      return responseData;
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  }
+}
 
 // General function to refresh the displayed table data.
 // You can invoke this after any table-modifying operation to keep consistency.

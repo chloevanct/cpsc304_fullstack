@@ -32,7 +32,31 @@
     <hr />
     <br />
     <!-- ========================================================================= -->
-    <h2>Animal Table</h2>
+    <h2>Animals Available for Adoption</h2>
+    <button id="fetchAvailableAnimals">Click to see updated list of animals available for adoption</button>
+    <br /><br />
+    <table id="animalsAvailableTable" border="1">
+      <thead>
+        <tr>
+          <!--Table head, need to be adjusted accordingly to align with your own.-->
+          <th>animalID</th>
+          <th>animalName</th>
+          <th>age</th>
+          <th>breed</th>
+          <th>branchID</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <br />
+    <hr />
+    <br />
+    <!-- ========================================================================= -->
+
+
+    <!-- ========================================================================= -->
+    <h2>Animals for Adoption</h2>
     <table id="animaltable" border="1">
       <thead>
         <tr>
@@ -75,69 +99,206 @@
     <br />
     <!-- ========================================================================= -->
 
-    <div style="display: flex; justify-content: space-around; align-items: start;">
-
+    <div
+      style="display: flex; justify-content: space-around; align-items: start"
+    >
       <!-- Insert -->
       <div>
-          <h2>Insert Values into Applications Table</h2>
-          <form id="insertApplicationsTable">
-            branchID: <input type="text" id="insertBranchID" placeholder="Enter branchID" maxlength="8" required />
-            <br /><br />
-            adopterID: <input type="text" id="insertAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
-            <br /><br />
-            animalID: <input type="text" id="insertAnimalID" placeholder="Enter branchID" maxlength="8" required/>
-            <br /><br />
-            applicationStatus: <input type="text" id="insertApplicationStatus" placeholder="Enter Application Status" maxlength="200"/>
-            <br /><br />
-            applicationDate: <input type="text" id="insertApplicationDate" placeholder="YYYY-MM-DD" maxlength="200"/>
-            <br /><br />
-            <button type="submit">insert</button> <br />
-          </form>
-          <div id="insertApplicationResultMsg"></div>
+        <h2>Insert Values into Applications Table</h2>
+        <form id="insertApplicationsTable">
+          branchID:
+          <input
+            type="text"
+            id="insertBranchID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          adopterID:
+          <input
+            type="text"
+            id="insertAdopterID"
+            placeholder="Enter adopterID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          animalID:
+          <input
+            type="text"
+            id="insertAnimalID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          applicationStatus:
+          <input
+            type="text"
+            id="insertApplicationStatus"
+            placeholder="Enter Application Status"
+            maxlength="200"
+          />
+          <br /><br />
+          applicationDate:
+          <input
+            type="text"
+            id="insertApplicationDate"
+            placeholder="YYYY-MM-DD"
+            maxlength="200"
+          />
+          <br /><br />
+          <button type="submit">insert</button> <br />
+        </form>
+        <div id="insertApplicationResultMsg"></div>
       </div>
-  
+
       <!-- Delete -->
       <div>
-          <h2>Delete Values from Applications Table</h2>
-          <form id="deleteApplicationsTable">
-            branchID: <input type="text" id="deleteBranchID" placeholder="Enter branchID" maxlength="8" required />
-            <br /><br />
-            adopterID: <input type="text" id="deleteAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
-            <br /><br />
-            animalID: <input type="text" id="deleteAnimalID" placeholder="Enter branchID" maxlength="8" required/>
-            <br /><br />
-            <button type="submit">delete</button> <br />
-          </form>
-          <div id="deleteApplicationResultMsg"></div>
+        <h2>Delete Values from Applications Table</h2>
+        <form id="deleteApplicationsTable">
+          branchID:
+          <input
+            type="text"
+            id="deleteBranchID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          adopterID:
+          <input
+            type="text"
+            id="deleteAdopterID"
+            placeholder="Enter adopterID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          animalID:
+          <input
+            type="text"
+            id="deleteAnimalID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
+          <br /><br />
+          <button type="submit">delete</button> <br />
+        </form>
+        <div id="deleteApplicationResultMsg"></div>
       </div>
 
       <!-- Update -->
       <div>
         <h2>Update Values from Applications Table</h2>
         <form id="updateApplicationsTable">
-          branchID: <input type="text" id="updateBranchID" placeholder="Enter branchID" maxlength="8" required />
+          branchID:
+          <input
+            type="text"
+            id="updateBranchID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
           <br /><br />
-          adopterID: <input type="text" id="updateAdopterID" placeholder="Enter adopterID" maxlength="8" required/>
+          adopterID:
+          <input
+            type="text"
+            id="updateAdopterID"
+            placeholder="Enter adopterID"
+            maxlength="8"
+            required
+          />
           <br /><br />
-          animalID: <input type="text" id="updateAnimalID" placeholder="Enter branchID" maxlength="8" required/>
+          animalID:
+          <input
+            type="text"
+            id="updateAnimalID"
+            placeholder="Enter branchID"
+            maxlength="8"
+            required
+          />
           <br /><br />
-          new applicationStatus: <input type="text" id="updateApplicationStatus" placeholder="Enter Application Status" maxlength="200"/>
+          new applicationStatus:
+          <input
+            type="text"
+            id="updateApplicationStatus"
+            placeholder="Enter Application Status"
+            maxlength="200"
+          />
           <br /><br />
-          new applicationDate: <input type="text" id="updateApplicationDate" placeholder="YYYY-MM-DD" maxlength="200"/>
+          new applicationDate:
+          <input
+            type="text"
+            id="updateApplicationDate"
+            placeholder="YYYY-MM-DD"
+            maxlength="200"
+          />
           <br /><br />
           <button type="submit">update</button> <br />
         </form>
         <div id="updateApplicationResultMsg"></div>
+      </div>
     </div>
-  
-  </div>
-  <br />
-  <hr />
-  <br />
+    <br />
+    <hr />
+    <br />
 
     <!-- ========================================================================= -->
 
+    <h2>Projection Table</h2>
 
+    <label for="tableDropdown">Select Table:</label>
+    <select id="tableDropdown"></select>
+    <label for="attributeDropdown">Select Attribute:</label>
+    <select id="attributeDropdown" multiple></select>
+    <button id="displayProjectionTable">Display ProjectionTable</button> <br />
+    <table id="projectionResultTable" border="1"></table>
+
+    <br />
+    <hr />
+    <br />
+
+    <!-- ========================================================================= -->
+    <h2>Gold Donors</h2>
+    <button id="displayTopDonors">Display Gold Donors</button>
+    <br /><br />
+    <table id="topDonorsTable" border="1">
+      <thead>
+       <tr>           
+          <th>donorID</th>
+          <th>totalAmount</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+   
+    <br />
+    <hr />
+    <br />
+     <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
+    <h2>Donors Who Have Attended Every Event</h2>
+    <button id="displayDonorsAttendedEveryEvent">Click to Display</button>
+    <br /><br />
+    <table id="donorsAttendedAllEventsTable" border="1">
+      <thead>
+       <tr>           
+          <th>donorID</th>
+       </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+   
+    <br />
+    <hr />
+    <br />
+     <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
 
     <!-- Show 'Demotable'. 
         Data will be fetched and inserted here dynamically using JavaScript. -->
@@ -192,6 +353,47 @@
     <br />
     <hr />
     <br />
+    <!-- ========================================================================= -->
+
+    <h2>Selection Table</h2>
+
+    <form id="filterForm">
+      <div id="filterRows">
+        <div class="filterRow">
+          <select name="attribute">
+            <option value="eventLocation">Event Location</option>
+            <option value="eventDate">Event Date</option>
+            <option value="title">Title</option>
+            <option value="eventType">Event Type</option>
+          </select>
+
+          <!-- <br />equals<br /> -->
+          <!-- <p>equals</p> -->
+          <select name="filterType">
+            <option value="equals">Equals</option>
+          </select>
+          <input type="text" name="filterValue" placeholder="Filter Value" />
+          <button type="button" onclick="removeFilterRow(this)">Remove</button>
+          <select name="condition">
+            <option value="and">and</option>
+            <option value="or">or</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="addFilter">Add Filter</button>
+      <button id="applyFilters">Apply Filters</button>
+
+      <table id="selectionTable" border="1"></table>
+
+      <!-- <button type="button" onclick="addFilterRow()">Add Filter</button> -->
+      <!-- <button type="submit">Apply Filters</button> -->
+    </form>
+
+    <br />
+    <hr />
+    <br />
+
     <!-- ========================================================================= -->
 
     <h2>Update Name in DemoTable</h2>
