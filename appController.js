@@ -7,6 +7,15 @@ const bodyParser = require("body-parser");
 
 // ----------------------------------------------------------
 
+router.get("/available-animals", async (req, res) => {
+  try {
+    const animals = await appService.getAvailableAnimals();
+    res.json({ rows: animals });
+  } catch (err) {
+    console.log("error getting available animals for adoption table");
+  }
+});
+
 router.get("/animals", async (req, res) => {
   try {
     const animals = await appService.getAnimals();

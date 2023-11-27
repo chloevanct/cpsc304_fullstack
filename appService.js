@@ -38,6 +38,18 @@ async function withOracleDB(action) {
   }
 }
 
+async function getAvailableAnimals() {
+  const query =
+    "SELECT A.animalID, A.animalName, A.breed, A.branchID FROM AnimalAdmits A WHERE A.animalID NOT IN (SELECT P.animalID FROM Applies P WHERE P.applicationStatus = 'Accepted') GROUP BY A.animalID, A.animalName, A.breed, A.branchID";
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function getAnimals() {
   const query =
     "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed WHERE NOT EXISTS (SELECT 1 FROM Applies ap WHERE a.animalID = ap.animalID AND ap.applicationStatus = 'Accepted')";
@@ -292,4 +304,5 @@ module.exports = {
   submitApplication,
   withdrawApplication,
   updateApplication,
+  getAvailableAnimals
 };

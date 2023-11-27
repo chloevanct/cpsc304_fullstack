@@ -36,6 +36,30 @@ async function checkDbConnection() {
     });
 }
 
+// fetch and display available animals for adoption (nested aggregation with group by query)
+async function fetchAndDisplayAvailableAnimals() {
+  const tableElement = document.getElementById("animalsAvailableTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/available-animals", {
+    method: "GET",
+  });
+  const animalsData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  animalsData.rows.forEach(animal => {
+    const row = tableBody.insertRow();
+    animal.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
 // Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
 async function fetchAndDisplayAnimals() {
   const tableElement = document.getElementById("animaltable");
@@ -277,6 +301,9 @@ window.onload = function () {
   checkDbConnection();
   fetchTableData();
   fillDropdownLists();
+  document
+  .getElementById("fetchAvailableAnimals")
+  .addEventListener("click", fetchAndDisplayAvailableAnimals);
   document
     .getElementById("resetDemotable")
     .addEventListener("click", resetDemotable);
