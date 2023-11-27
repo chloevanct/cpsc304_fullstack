@@ -89,17 +89,32 @@ router.put("/projection", async (req, res) => {
 router.post("/applications-submit", async (req, res) => {
   const { branchID, adopterID, animalID, applicationStatus, applicationDate } =
     req.body;
-  const updateResult = await appService.submitApplication(
-    branchID,
-    adopterID,
-    animalID,
-    applicationStatus,
-    applicationDate
-  );
-  if (updateResult) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ success: false });
+
+  // Sanitize status and date
+  const validStatuses = ["accepted", "rejected", "pending"];
+  if (!validStatuses.includes(applicationStatus.toLowerCase())) {
+    res.status(400).json({ success: false, error: "Application status must be one of 'Accepted', 'Rejected', or 'Pending'" });
+  }
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(applicationDate)) {
+    res.status(400).json({ success: false, error: "Invalid date format" });
+  }
+
+  try {
+    const updateResult = await appService.submitApplication(
+      branchID,
+      adopterID,
+      animalID,
+      applicationStatus,
+      applicationDate
+    );
+    if (updateResult) {
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -107,15 +122,19 @@ router.post("/applications-submit", async (req, res) => {
 // REQUIRES branchID, adopterID, animalID in request body to correctly identify which row to remove
 router.delete("/applications-withdraw", async (req, res) => {
   const { branchID, adopterID, animalID } = req.body;
-  const updateResult = await appService.withdrawApplication(
-    branchID,
-    adopterID,
-    animalID
-  );
-  if (updateResult) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ success: false });
+  try {
+    const updateResult = await appService.withdrawApplication(
+      branchID,
+      adopterID,
+      animalID
+    );
+    if (updateResult.success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: updateResult.error });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -127,18 +146,34 @@ router.delete("/applications-withdraw", async (req, res) => {
 router.put("/applications-update", async (req, res) => {
   const { branchID, adopterID, animalID, applicationStatus, applicationDate } =
     req.body;
-  const updateResult = await appService.updateApplication(
-    branchID,
-    adopterID,
-    animalID,
-    applicationStatus,
-    applicationDate
-  );
-  if (updateResult) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ success: false });
+
+  // Sanitize status and date
+  const validStatuses = ["accepted", "rejected", "pending"];
+  if (!validStatuses.includes(applicationStatus.toLowerCase())) {
+    res.status(400).json({ success: false, error: "Application status must be one of 'Accepted', 'Rejected', or 'Pending'" });
   }
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(applicationDate)) {
+    res.status(400).json({ success: false, error: "Invalid date format" });
+  }
+
+  try {
+    const updateResult = await appService.updateApplication(
+      branchID,
+      adopterID,
+      animalID,
+      applicationStatus,
+      applicationDate
+    );
+    if (updateResult.success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: updateResult.error });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+
 });
 
 // API endpoints

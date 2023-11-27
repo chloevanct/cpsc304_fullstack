@@ -36,6 +36,9 @@ async function checkDbConnection() {
     });
 }
 
+/**
+ * ANIMALS TABLE -----------------------------------------------------------------------------------------------------------
+ */
 // fetch and display available animals for adoption (nested aggregation with group by query)
 async function fetchAndDisplayAvailableAnimals() {
   const tableElement = document.getElementById("animalsAvailableTable");
@@ -118,7 +121,7 @@ function getVaccinationCount(animalID, vaccinationTable) {
 
 
 /**
- * APPLIES TABLE --------------------------------------------------------------
+ * APPLIES TABLE -----------------------------------------------------------------------------------------------------------
  */
 // Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
 async function fetchAndDisplayApplications() {
@@ -169,7 +172,7 @@ async function insertApplication(event) {
       branchID: branchIDValue,
       adopterID: adopterIDValue,
       animalID: animalIDValue,
-      applicationStatus: applicationStatusValue,
+      applicationStatus: applicationStatusValue.charAt(0).toUpperCase() + applicationStatusValue.slice(1).toLowerCase(),
       applicationDate: applicationDateValue,
     }),
   });
@@ -181,7 +184,15 @@ async function insertApplication(event) {
     messageElement.textContent = "Data inserted successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error inserting data!";
+    if (responseData.error.includes("ORA-00001")) {
+      // Unique constraint violation
+      messageElement.textContent = "Error! Cannot insert a duplicate application.";
+    } else if (responseData.error.includes("ORA-01400")) {
+      // Empty status/date fields
+      messageElement.textContent = "Error! Please enter an application Status and Date";
+    } else {
+      messageElement.textContent = "Error inserting data! " + responseData.error;
+    }
   }
 }
 
@@ -212,7 +223,7 @@ async function deleteApplication(event) {
     messageElement.textContent = "Application deleted successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error deleting application!";
+    messageElement.textContent = "Error inserting data! " + responseData.error;
   }
 }
 
@@ -235,7 +246,7 @@ async function updateApplication(event) {
       branchID: branchIDValue,
       adopterID: adopterIDValue,
       animalID: animalIDValue,
-      applicationStatus: newApplicationStatusValue,
+      applicationStatus: newApplicationStatusValue.charAt(0).toUpperCase() + newApplicationStatusValue.slice(1).toLowerCase(),
       applicationDate: newApplicationDateValue,
     }),
   });
@@ -247,10 +258,18 @@ async function updateApplication(event) {
     messageElement.textContent = "Name updated successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error updating name!";
+    if (responseData.error.includes("ORA-01400")) {
+      // Empty status/date fields
+      messageElement.textContent = "Error! Please enter an application Status and Date";
+    } else {
+      messageElement.textContent = "Error inserting data! " + responseData.error;
+    }
   }
 }
 
+/**
+ * DEMOTABLE -----------------------------------------------------------------------------------------------------------
+ */
 
 // Fetches data from the demotable and displays it.
 async function fetchAndDisplayUsers() {
@@ -319,7 +338,7 @@ async function insertDemotable(event) {
     messageElement.textContent = "Data inserted successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error inserting data!";
+    messageElement.textContent = "Error inserting application!";
   }
 }
 
@@ -348,7 +367,7 @@ async function updateNameDemotable(event) {
     messageElement.textContent = "Name updated successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error updating name!";
+    messageElement.textContent = "Error updating application!";
   }
 }
 

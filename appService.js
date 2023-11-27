@@ -174,8 +174,8 @@ async function submitApplication(
       { autoCommit: true }
     );
     return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
+  }).catch((err) => {
+    throw err;
   });
 }
 
@@ -187,9 +187,13 @@ async function withdrawApplication(branchID, adopterID, animalID) {
       { branchID, adopterID, animalID },
       { autoCommit: true }
     );
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
+    if (result.rowsAffected && result.rowsAffected > 0) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Could not find matching application." };
+    }
+  }).catch((err) => {
+    throw err;
   });
 }
 
@@ -209,9 +213,13 @@ async function updateApplication(
       { branchID, adopterID, animalID, applicationStatus, applicationDate },
       { autoCommit: true }
     );
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
+    if (result.rowsAffected && result.rowsAffected > 0) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Could not find matching application." };
+    }
+  }).catch((err) => {
+    throw err;
   });
 }
 
