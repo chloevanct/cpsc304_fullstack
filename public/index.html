@@ -222,30 +222,20 @@
     <hr />
     <br />
 
-    <!-- HTML file -->
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Your Web App</title>
-      </head>
-      <body>
-        <label for="tableDropdown">Select Table:</label>
-        <select id="tableDropdown"></select>
+    <!-- ========================================================================= -->
 
-        <label for="attributeDropdown">Select Attribute:</label>
-        <select id="attributeDropdown" multiple></select>
+    <h2>Projection Table</h2>
 
-        <!-- Other HTML content -->
+    <label for="tableDropdown">Select Table:</label>
+    <select id="tableDropdown"></select>
+    <label for="attributeDropdown">Select Attribute:</label>
+    <select id="attributeDropdown" multiple></select>
+    <button id="displayProjectionTable">Display ProjectionTable</button> <br />
+    <table id="projectionResultTable" border="1"></table>
 
-        <script src="scripts.js"></script>
-      </body>
-    </html>
-
-    <table id="projectionResultTable" border="1">
-      <!-- The result will be dynamically populated using JavaScript -->
-    </table>
+    <br />
+    <hr />
+    <br />
 
     <!-- ========================================================================= -->
 
@@ -302,6 +292,47 @@
     <br />
     <hr />
     <br />
+    <!-- ========================================================================= -->
+
+    <h2>Selection Table</h2>
+
+    <form id="filterForm">
+      <div id="filterRows">
+        <div class="filterRow">
+          <select name="attribute">
+            <option value="eventLocation">Event Location</option>
+            <option value="eventDate">Event Date</option>
+            <option value="title">Title</option>
+            <option value="eventType">Event Type</option>
+          </select>
+
+          <!-- <br />equals<br /> -->
+          <!-- <p>equals</p> -->
+          <select name="filterType">
+            <option value="equals">Equals</option>
+          </select>
+          <input type="text" name="filterValue" placeholder="Filter Value" />
+          <button type="button" onclick="removeFilterRow(this)">Remove</button>
+          <select name="condition">
+            <option value="and">and</option>
+            <option value="or">or</option>
+          </select>
+        </div>
+      </div>
+
+      <button id="addFilter">Add Filter</button>
+      <button id="applyFilters">Apply Filters</button>
+
+      <table id="selectionTable" border="1"></table>
+
+      <!-- <button type="button" onclick="addFilterRow()">Add Filter</button> -->
+      <!-- <button type="submit">Apply Filters</button> -->
+    </form>
+
+    <br />
+    <hr />
+    <br />
+
     <!-- ========================================================================= -->
 
     <h2>Update Name in DemoTable</h2>

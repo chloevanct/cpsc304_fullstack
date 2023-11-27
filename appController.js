@@ -46,7 +46,9 @@ router.get("/applications", async (req, res) => {
 router.put("/projection", async (req, res) => {
   try {
     const { table_name, attributes } = req.body;
+
     const table = await appService.getTable(table_name, attributes);
+    // console.log(table);
     res.json(table);
   } catch (err) {
     console.log("error processing projection query:", err);

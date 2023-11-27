@@ -8,11 +8,40 @@ const dbConfig = {
   user: envVariables.ORACLE_USER,
   password: envVariables.ORACLE_PASS,
   connectString: `${envVariables.ORACLE_HOST}:${envVariables.ORACLE_PORT}/${envVariables.ORACLE_DBNAME}`,
+  poolMax: 1,
 };
+
+// ----------------------------------------------------------
+// Wrapper to manage OracleDB actions, simplifying connection handling.
+let poolMade = false;
+async function withOracleDB(action) {
+  let connection;
+  try {
+    if (!poolMade) {
+      await oracledb.createPool(dbConfig);
+      poolMade = true;
+    }
+
+    connection = await oracledb.getConnection();
+    return await action(connection);
+  } catch (err) {
+    console.error(err);
+    throw err;
+  } finally {
+    if (connection) {
+      try {
+        await connection.close();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
 
 async function getAnimals() {
   const query =
-    "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed LEFT JOIN Applies ap ON a.animalID = ap.animalID AND ap.applicationStatus <> 'Approved'";
+    "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed WHERE NOT EXISTS (SELECT 1 FROM Applies ap WHERE a.animalID = ap.animalID AND ap.applicationStatus = 'Accepted')";
+  // "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed LEFT JOIN Applies ap ON a.animalID = ap.animalID AND ap.applicationStatus <> 'Approved'";
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(query);
     // console.log(result);
@@ -53,7 +82,7 @@ async function getVaccinationCounts() {
     const result = await connection.execute(
       "SELECT a.animalID, COUNT(v.animalID) AS vaccination_count FROM AnimalInfo i, AnimalAdmits a, Vaccination v WHERE i.breed = a.breed AND a.animalID = v.animalID GROUP BY a.animalID"
     );
-    console.log(result);
+    // console.log(result);
     return result.rows;
   }).catch(() => {
     return [];
@@ -150,26 +179,26 @@ async function updateApplication(
   });
 }
 
-// ----------------------------------------------------------
-// Wrapper to manage OracleDB actions, simplifying connection handling.
-async function withOracleDB(action) {
-  let connection;
-  try {
-    connection = await oracledb.getConnection(dbConfig);
-    return await action(connection);
-  } catch (err) {
-    console.error(err);
-    throw err;
-  } finally {
-    if (connection) {
-      try {
-        await connection.close();
-      } catch (err) {
-        console.error(err);
-      }
-    }
-  }
-}
+// // ----------------------------------------------------------
+// // Wrapper to manage OracleDB actions, simplifying connection handling.
+// async function withOracleDB(action) {
+//   let connection;
+//   try {
+//     connection = await oracledb.getConnection(dbConfig);
+//     return await action(connection);
+//   } catch (err) {
+//     console.error(err);
+//     throw err;
+//   } finally {
+//     if (connection) {
+//       try {
+//         await connection.close();
+//       } catch (err) {
+//         console.error(err);
+//       }
+//     }
+//   }
+// }
 
 // ----------------------------------------------------------
 // Core functions for database operations

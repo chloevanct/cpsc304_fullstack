@@ -214,7 +214,7 @@ async function countDemotable() {
 
 // Function to fill the dropdown lists
 function fillDropdownLists() {
-  let tableColumns = {
+  let tables = {
     Donor: ["donorID", "lastName", "firstName"],
     Events: ["eventLocation", "eventDate", "title", "eventType"],
     Shelter: ["branchID", "phoneNum", "shelterAddress"],
@@ -249,17 +249,16 @@ function fillDropdownLists() {
   const tableDropdown = document.getElementById("tableDropdown");
   const attributeDropdown = document.getElementById("attributeDropdown");
 
-  // Populate the table dropdown
-  for (const tableName in tableColumns) {
+  for (const table in tables) {
     const option = document.createElement("option");
-    option.value = tableName;
-    option.text = tableName;
+    option.value = table;
+    option.text = table;
     tableDropdown.add(option);
   }
 
   tableDropdown.addEventListener("change", () => {
     const selectedTable = tableDropdown.value;
-    const attributes = tableColumns[selectedTable] || [];
+    const attributes = tables[selectedTable] || [];
     attributeDropdown.innerHTML = "";
     for (const attribute of attributes) {
       const option = document.createElement("option");
@@ -270,8 +269,6 @@ function fillDropdownLists() {
     attributeDropdown.multiple = true;
   });
 }
-
-// window.onload = fillDropdownLists;
 
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
@@ -292,7 +289,75 @@ window.onload = function () {
   document
     .getElementById("countDemotable")
     .addEventListener("click", countDemotable);
+  document
+    .getElementById("displayProjectionTable")
+    .addEventListener("click", displayProjectionTable);
 };
+async function displayProjectionTable() {
+  const tableName = document.getElementById("tableDropdown").value;
+
+  const dropdown = document.getElementById("attributeDropdown");
+  const selectedOptions = Array.from(dropdown.selectedOptions).map(
+    (option) => option.value
+  );
+  const rows = getProjectionTable();
+
+  if (selectedOptions.length > 0) {
+    try {
+      const tableData = await getProjectionTable(tableName, selectedOptions);
+      const table = document.getElementById("projectionResultTable");
+
+      table.innerHTML = "";
+      const headerRow = table.insertRow();
+      for (const attribute of selectedOptions) {
+        const headerCell = headerRow.insertCell();
+        headerCell.textContent = attribute;
+      }
+
+      // Populate table values
+      for (const rowValues of tableData) {
+        const row = table.insertRow();
+        for (const rowValue of rowValues) {
+          const cell = row.insertCell();
+          cell.textContent = rowValue;
+        }
+      }
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  }
+}
+
+async function getProjectionTable() {
+  const tableName = document.getElementById("tableDropdown").value;
+  const dropdown = document.getElementById("attributeDropdown");
+  const selectedOptions = Array.from(dropdown.selectedOptions).map(
+    (option) => option.value
+  );
+
+  if (selectedOptions.length > 0) {
+    try {
+      const response = await fetch("/projection", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          table_name: tableName,
+          attributes: selectedOptions,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error(`Error retrieving Projection table data!`);
+      }
+      const responseData = await response.json();
+
+      return responseData;
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  }
+}
 
 // General function to refresh the displayed table data.
 // You can invoke this after any table-modifying operation to keep consistency.
