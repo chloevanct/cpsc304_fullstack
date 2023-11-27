@@ -61,6 +61,15 @@ router.get("/top-donors", async (req, res) => {
   }
 });
 
+router.get("/donors-attend-all-events", async (req, res) => {
+  try {
+    const donors = await appService.getDonorsWhoAttendAllEvents();
+    res.json({ rows: donors });
+  } catch (err) {
+    console.log("error getting donors who attended all events table");
+  }
+});
+
 router.put("/projection", async (req, res) => {
   try {
     const { table_name, attributes } = req.body;

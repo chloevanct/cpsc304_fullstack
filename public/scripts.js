@@ -318,6 +318,31 @@ async function fetchAndDisplayTopDonors() {
   });
 }
 
+// fetch and display donors who've attend all events (divison query)
+async function fetchAndDisplayDonorsWhoAttendedAllEvents() {
+  const tableElement = document.getElementById("donorsAttendedAllEventsTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/donors-attend-all-events", {
+    method: "GET",
+  });
+  const donorData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  donorData.rows.forEach(donor => {
+    const row = tableBody.insertRow();
+    donor.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+
 
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
@@ -347,6 +372,9 @@ window.onload = function () {
   document
     .getElementById("displayTopDonors")
     .addEventListener("click", fetchAndDisplayTopDonors);
+  document 
+    .getElementById("displayDonorsAttendedEveryEvent")
+    .addEventListener("click", fetchAndDisplayDonorsWhoAttendedAllEvents)
 };
 async function displayProjectionTable() {
   const tableName = document.getElementById("tableDropdown").value;

@@ -140,6 +140,18 @@ async function getTopDonors() {
   "SELECT donorID, SUM(amount) AS total_donation FROM Donates GROUP BY donorID HAVING SUM(amount) > 1000 ORDER BY total_donation DESC";  
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(query);
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getDonorsWhoAttendAllEvents() {
+  const query =
+  "SELECT D.donorID FROM Donor D WHERE NOT EXISTS (SELECT E.eventLocation, E.eventDate, E.title FROM Events E WHERE NOT EXISTS (SELECT A.donorID FROM Attends A WHERE A.donorID = D.donorID AND A.attendsLocation = E.eventLocation AND A.attendsDate = E.eventDate AND A.title = E.title))";  
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
     console.log(result);
     return result.rows;
   }).catch(() => {
@@ -317,5 +329,6 @@ module.exports = {
   withdrawApplication,
   updateApplication,
   getAvailableAnimals,
-  getTopDonors
+  getTopDonors,
+  getDonorsWhoAttendAllEvents
 };

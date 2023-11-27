@@ -234,8 +234,6 @@ INSERT INTO Shelter(branchID, phoneNum, shelterAddress) VALUES ('12345680', '778
 INSERT INTO Shelter(branchID, phoneNum, shelterAddress) VALUES ('12345681', '7781230036', '123 west 13th avenue, Vancouver, BC V6E9TS');
 INSERT INTO Shelter(branchID, phoneNum, shelterAddress) VALUES ('12345682', '7781230037', '123 west 14th avenue, Vancouver, BC V6E9TS');
 
-
-
 -- InventoryHolds(invID: varchar[8], branchID: varchar[8], quantity: integer, invType: varchar[200])
 INSERT INTO InventoryHolds(invID, branchID, quantity, invType) 
     VALUES('11111111', '12345678', 12, 'syringe');
@@ -295,7 +293,6 @@ INSERT INTO Events (eventLocation, eventDate,title,eventType)
 INSERT INTO Events (eventLocation, eventDate,title,eventType)
     VALUES ('Queen Elizabeth Park', TO_DATE('2022-10-31', 'YYYY-MM-DD'), 'Barktoberfest', 'Fundraising');
 
-    
 -- -- SalaryRanges(position: varchar[200], salary: integer)
 INSERT INTO SalaryRanges(position, salary)
     VALUES('Administrative Assistant', 50000);
@@ -327,7 +324,6 @@ INSERT INTO AnimalInfo (breed, species) VALUES ('German Shepherd', 'Dog');
 INSERT INTO AnimalInfo (breed, species)  VALUES ('Siamese Cat', 'Cat');
 INSERT INTO AnimalInfo (breed, species)  VALUES  ('French Bulldog', 'Dog');
 
-
 -- AnimalAdmits(animalID: varchar[8], breed: varchar[200], animalName: varchar[200], age: integer, dateAdmit: date, branchID: varchar[8])
 INSERT INTO AnimalAdmits (animalID, breed, animalName, age, dateAdmit, branchID) 
     VALUES ('1', 'Dog', 'Mochi', 2, TO_DATE('2022-4-30', 'YYYY-MM-DD'), '12345678');
@@ -347,7 +343,6 @@ INSERT INTO Vaccination (vacType,vacDate,animalID) VALUES ('Rabies', TO_DATE('20
 INSERT INTO Vaccination (vacType,vacDate,animalID) VALUES ('Rabies', TO_DATE('2022-10-4', 'YYYY-MM-DD'), '1');
 INSERT INTO Vaccination (vacType,vacDate,animalID) VALUES ('Rabies', TO_DATE('2022-10-5', 'YYYY-MM-DD'), '2');
 
-
 -- Adopters(adopterID: varchar[8], lastName: varchar[200], firstName: varchar[200], phoneNum: varchar[10])
 INSERT INTO Adopters(adopterID, lastName, firstName, phoneNum) 
 		VALUES('100', 'Smith', 'John', '6043121111');
@@ -366,6 +361,11 @@ INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('2', 
 INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('3', 'New Brighton Park', TO_DATE('2021-03-04', 'YYYY-MM-DD'), 'Furry Friends Fair');
 INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('4', 'New Brighton Park', TO_DATE('2021-03-04', 'YYYY-MM-DD'), 'Furry Friends Fair');
 INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('5', 'New Brighton Park', TO_DATE('2021-03-04', 'YYYY-MM-DD'), 'Furry Friends Fair');
+-- -- for Divison Query, insert Attends for donorID 5 so he attends all events
+-- INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('5', 'Stanley Park', TO_DATE('2023-07-15', 'YYYY-MM-DD'), 'PetPalooza');
+-- INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('5', 'Olympic Oval', TO_DATE('2022-05-15', 'YYYY-MM-DD'), 'Strut for Strays 5K');
+-- INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('5', 'Vancouver Art Gallery', TO_DATE('2025-09-15', 'YYYY-MM-DD'), 'Paws and Painting Night');
+-- INSERT INTO Attends (donorID, attendsLocation, attendsDate, title) VALUES ('5', 'Queen Elizabeth Park', TO_DATE('2022-10-31', 'YYYY-MM-DD'), 'Barktoberfest');
 
 -- Donates(donorID: varchar[8], branchID: varchar[8], date: date, amount: float)
 INSERT INTO Donates (donorID, branchID, donationDate, amount) VALUES ('1' ,'12345678', TO_DATE('2008-07-12', 'YYYY-MM-DD'), '3000.00');
