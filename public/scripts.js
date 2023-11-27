@@ -294,6 +294,31 @@ function fillDropdownLists() {
   });
 }
 
+// fetch and display top donors (aggregation with having query)
+async function fetchAndDisplayTopDonors() {
+  const tableElement = document.getElementById("topDonorsTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/top-donors", {
+    method: "GET",
+  });
+  const donorData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  donorData.rows.forEach(donor => {
+    const row = tableBody.insertRow();
+    donor.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
 // Add or remove event listeners based on the desired functionalities.
@@ -319,6 +344,9 @@ window.onload = function () {
   document
     .getElementById("displayProjectionTable")
     .addEventListener("click", displayProjectionTable);
+  document
+    .getElementById("displayTopDonors")
+    .addEventListener("click", fetchAndDisplayTopDonors);
 };
 async function displayProjectionTable() {
   const tableName = document.getElementById("tableDropdown").value;

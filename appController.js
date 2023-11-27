@@ -52,6 +52,15 @@ router.get("/applications", async (req, res) => {
   }
 });
 
+router.get("/top-donors", async (req, res) => {
+  try {
+    const donors = await appService.getTopDonors();
+    res.json({ rows: donors });
+  } catch (err) {
+    console.log("error getting available donors for top donors table");
+  }
+});
+
 router.put("/projection", async (req, res) => {
   try {
     const { table_name, attributes } = req.body;

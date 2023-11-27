@@ -40,7 +40,7 @@ async function withOracleDB(action) {
 
 async function getAvailableAnimals() {
   const query =
-    "SELECT A.animalID, A.animalName, A.breed, A.branchID FROM AnimalAdmits A WHERE A.animalID NOT IN (SELECT P.animalID FROM Applies P WHERE P.applicationStatus = 'Accepted') GROUP BY A.animalID, A.animalName, A.breed, A.branchID";
+    "SELECT A.animalID, A.animalName, A.age, A.breed, A.branchID FROM AnimalAdmits A WHERE A.animalID NOT IN (SELECT P.animalID FROM Applies P WHERE P.applicationStatus = 'Accepted') GROUP BY A.animalID, A.animalName, A.age, A.breed, A.branchID";
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(query);
     // console.log(result);
@@ -128,6 +128,18 @@ async function getTableNames() {
 async function getApplications() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT * FROM Applies");
+    console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getTopDonors() {
+  const query =
+  "SELECT donorID, SUM(amount) AS total_donation FROM Donates GROUP BY donorID HAVING SUM(amount) > 1000 ORDER BY total_donation DESC";  
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
     console.log(result);
     return result.rows;
   }).catch(() => {
@@ -304,5 +316,6 @@ module.exports = {
   submitApplication,
   withdrawApplication,
   updateApplication,
-  getAvailableAnimals
+  getAvailableAnimals,
+  getTopDonors
 };
