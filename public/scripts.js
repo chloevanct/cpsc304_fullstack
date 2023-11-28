@@ -192,6 +192,11 @@ async function updateNameDemotable(event) {
   }
 }
 
+function addFilterRow() {
+  const filterRows = document.getElementById("filterRows");
+  filterRows.appendChild(filterRows.firstElementChild.cloneNode(true));
+}
+
 // Counts rows in the demotable.
 // Modify the function accordingly if using different aggregate functions or procedures.
 async function countDemotable() {
@@ -292,7 +297,13 @@ window.onload = function () {
   document
     .getElementById("displayProjectionTable")
     .addEventListener("click", displayProjectionTable);
+  document
+    .getElementById("applyFilters")
+    .addEventListener("click", displayEventsTable);
+
+  document.getElementById("addFilter").addEventListener("click", addFilterRow);
 };
+
 async function displayProjectionTable() {
   const tableName = document.getElementById("tableDropdown").value;
 
@@ -357,6 +368,29 @@ async function getProjectionTable() {
       console.error("Error:", error.message);
     }
   }
+}
+
+function addFilterRow() {
+  const filterRows = document.getElementById("filterRows");
+  filterRows.appendChild(filterRows.firstElementChild.cloneNode(true));
+}
+
+function displayEventsTable() {
+  // const filterRows = document.getElementById("filterRows");
+  // console.log(filterRows);
+  // const filterRowArray = Array.from(filterRows.childNodes)
+
+  // const selectedOptions = Array.from(dropdown.selectedOptions).map(
+  //   (option) => option.value
+  // );
+
+  const filterRowElements = document
+    .getElementById("filterRows")
+    .querySelectorAll(".filterRow");
+  const filterRowArray = Array.from(filterRowElements);
+
+  // Now filterRowArray is an array containing all .filterRow elements
+  console.log(filterRowArray);
 }
 
 // General function to refresh the displayed table data.

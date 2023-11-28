@@ -32,7 +32,7 @@
     <hr />
     <br />
     <!-- ========================================================================= -->
-    <h2>Animals for Adoption</h2>
+    <h2>Animal Table</h2>
     <table id="animaltable" border="1">
       <thead>
         <tr>
@@ -312,7 +312,7 @@
             <option value="equals">Equals</option>
           </select>
           <input type="text" name="filterValue" placeholder="Filter Value" />
-          <button type="button" onclick="removeFilterRow(this)">Remove</button>
+          <!-- <button type="button" onclick="removeFilterRow(this)">Remove</button> -->
           <select name="condition">
             <option value="and">and</option>
             <option value="or">or</option>
@@ -320,8 +320,8 @@
         </div>
       </div>
 
-      <button id="addFilter">Add Filter</button>
-      <button id="applyFilters">Apply Filters</button>
+      <button id="addFilter" type="button">Add Filter</button>
+      <button id="applyFilters" type="button">Apply Filters</button>
 
       <table id="selectionTable" border="1"></table>
 
