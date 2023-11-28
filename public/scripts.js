@@ -639,10 +639,18 @@ async function displayEventsTable() {
   const inputs = getSelectedInputs();
   const whereQuery = generateWhereQuery(inputs);
   const eventsTable = await getEventsTable("WHERE " + whereQuery);
-  console.log(eventsTable);
+  // console.log(eventsTable);
   const attributes = ["eventLocation", "eventDate", "title", "eventType"];
 
+  let errorMessage = document.getElementById("warning");
+  if (containsInvalidInputs(inputs)) {
+    // errorMessage = document =
+    errorMessage.style.display = "inline";
+    return;
+  }
+
   try {
+    errorMessage.style.display = "none";
     const table = document.getElementById("selectionTable");
 
     table.innerHTML = "";
@@ -652,7 +660,6 @@ async function displayEventsTable() {
       headerCell.textContent = attribute;
     }
 
-    // Populate table values
     for (const rowValues of eventsTable) {
       const row = table.insertRow();
       for (const rowValue of rowValues) {
@@ -665,6 +672,33 @@ async function displayEventsTable() {
   }
 }
 
+function containsInvalidInputs(inputs) {
+  const invalidInputs = [
+    ";",
+    "INSERT",
+    "DROP TABLE",
+    "@",
+    "#",
+    "$",
+    "%",
+    "^",
+    "&",
+    "(",
+    ")",
+  ];
+  for (const input of inputs) {
+    for (const invalidInput of invalidInputs) {
+      // console.log(input);
+      if (input.includes(invalidInput)) {
+        console.log("invalid input");
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
 async function getEventsTable(whereQuery) {
   try {
     const response = await fetch("/events", {
@@ -673,7 +707,6 @@ async function getEventsTable(whereQuery) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        // table_name: tableName,
         where: whereQuery,
       }),
     });

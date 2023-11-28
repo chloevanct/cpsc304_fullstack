@@ -15,6 +15,11 @@ hr {
   margin: auto;
 }
 
+#warning {
+  display: none;
+  color: red;
+}
+
 /* TABLE STYLES */
 table {
   width: 100%;
