@@ -52,7 +52,9 @@ async function getAvailableAnimals() {
 
 async function getAnimals() {
   const query =
-    "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed WHERE NOT EXISTS (SELECT 1 FROM Applies ap WHERE a.animalID = ap.animalID AND ap.applicationStatus = 'Accepted')";
+    // "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed WHERE NOT EXISTS (SELECT 1 FROM Applies ap WHERE a.animalID = ap.animalID AND ap.applicationStatus = 'Accepted')";
+    "SELECT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i, AnimalAdmits a WHERE i.breed = a.breed";
+
   // "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed LEFT JOIN Applies ap ON a.animalID = ap.animalID AND ap.applicationStatus <> 'Approved'";
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(query);
