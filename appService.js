@@ -50,6 +50,18 @@ async function getAvailableAnimals() {
   });
 }
 
+async function getUnadoptedCountByBreed() {
+  const query =
+  "SELECT AA.breed, COUNT(AA.animalID) FROM AnimalAdmits AA WHERE AA.animalID NOT IN (SELECT AP.animalID FROM Applies AP WHERE AP.applicationStatus = 'Accepted')GROUP BY AA.breed";  
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function getAnimals() {
   const query =
     // "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed WHERE NOT EXISTS (SELECT 1 FROM Applies ap WHERE a.animalID = ap.animalID AND ap.applicationStatus = 'Accepted')";
@@ -340,5 +352,6 @@ module.exports = {
   updateApplication,
   getAvailableAnimals,
   getTopDonors,
-  getDonorsWhoAttendAllEvents
+  getDonorsWhoAttendAllEvents,
+  getUnadoptedCountByBreed
 };
