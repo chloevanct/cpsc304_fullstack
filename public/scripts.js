@@ -602,7 +602,7 @@ async function displayProjectionTable() {
 
   if (selectedOptions.length > 0) {
     try {
-      const tableData = await getProjectionTable(tableName, selectedOptions);
+      const tableData = await getProjectionTable();
       const table = document.getElementById("projectionResultTable");
 
       table.innerHTML = "";
@@ -662,22 +662,131 @@ function addFilterRow() {
   filterRows.appendChild(filterRows.firstElementChild.cloneNode(true));
 }
 
-function displayEventsTable() {
-  // const filterRows = document.getElementById("filterRows");
-  // console.log(filterRows);
-  // const filterRowArray = Array.from(filterRows.childNodes)
+async function displayEventsTable() {
+  const inputs = getSelectedInputs();
+  const whereQuery = generateWhereQuery(inputs);
+  const eventsTable = await getEventsTable("WHERE " + whereQuery);
+  // console.log(eventsTable);
+  const attributes = ["eventLocation", "eventDate", "title", "eventType"];
 
-  // const selectedOptions = Array.from(dropdown.selectedOptions).map(
-  //   (option) => option.value
-  // );
+  let errorMessage = document.getElementById("warning");
+  if (containsInvalidInputs(inputs)) {
+    // errorMessage = document =
+    errorMessage.style.display = "inline";
+    return;
+  }
 
+  try {
+    errorMessage.style.display = "none";
+    const table = document.getElementById("selectionTable");
+
+    table.innerHTML = "";
+    const headerRow = table.insertRow();
+    for (const attribute of attributes) {
+      const headerCell = headerRow.insertCell();
+      headerCell.textContent = attribute;
+    }
+
+    for (const rowValues of eventsTable) {
+      const row = table.insertRow();
+      for (const rowValue of rowValues) {
+        const cell = row.insertCell();
+        cell.textContent = rowValue;
+      }
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+}
+
+function containsInvalidInputs(inputs) {
+  const invalidInputs = [
+    ";",
+    "INSERT",
+    "DROP TABLE",
+    "@",
+    "#",
+    "$",
+    "%",
+    "^",
+    "&",
+    "(",
+    ")",
+  ];
+  for (const input of inputs) {
+    for (const invalidInput of invalidInputs) {
+      // console.log(input);
+      if (input.includes(invalidInput)) {
+        console.log("invalid input");
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+async function getEventsTable(whereQuery) {
+  try {
+    const response = await fetch("/events", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        where: whereQuery,
+      }),
+    });
+    if (!response.ok) {
+      throw new Error(`Error retrieving event table data!`);
+    }
+    const responseData = await response.json();
+
+    return responseData;
+  } catch (error) {
+    console.error("Error:", error.message);
+  }
+}
+
+function generateWhereQuery(inputs) {
+  let result = "";
+  for (let i = 0; i < inputs.length; i++) {
+    const input = inputs[i];
+    let value;
+    if (input[0] === "eventDate") {
+      value = "DATE " + "'" + input[1] + "'";
+    } else {
+      value = "'" + input[1] + "'";
+    }
+
+    if (i === inputs.length - 1) {
+      result = result + "" + input[0] + " " + "= " + value + " ";
+    } else {
+      result =
+        result + "" + input[0] + " " + "= " + value + " " + input[2] + " ";
+    }
+  }
+
+  return result;
+}
+
+function getSelectedInputs() {
   const filterRowElements = document
     .getElementById("filterRows")
     .querySelectorAll(".filterRow");
   const filterRowArray = Array.from(filterRowElements);
 
-  // Now filterRowArray is an array containing all .filterRow elements
-  console.log(filterRowArray);
+  const filters = [];
+
+  for (const filterRow of filterRowArray) {
+    const filter = [];
+    filter.push(filterRow.children[0].selectedOptions[0].text);
+    filter.push(filterRow.children[2].value);
+    filter.push(filterRow.children[3].selectedOptions[0].text);
+    filters.push(filter);
+  }
+
+  return filters;
 }
 
 // General function to refresh the displayed table data.

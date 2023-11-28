@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Link to the external CSS stylesheet. Uncomment if you wish to customize or add styling. -->
-    <!-- <link rel="stylesheet" href="styles.css">   -->
+    <link rel="stylesheet" href="styles.css" />
 
     <title>Database Application</title>
   </head>
@@ -329,14 +329,16 @@
 
     <h2>Selection Table</h2>
 
+    <h6></h6>
     <form id="filterForm">
+      Data filters (eventDate format: yyyy-mm-dd)
       <div id="filterRows">
         <div class="filterRow">
           <select name="attribute">
-            <option value="eventLocation">Event Location</option>
-            <option value="eventDate">Event Date</option>
-            <option value="title">Title</option>
-            <option value="eventType">Event Type</option>
+            <option value="eventLocation">eventLocation</option>
+            <option value="eventDate">eventDate</option>
+            <option value="title">title</option>
+            <option value="eventType">eventType</option>
           </select>
 
           <!-- <br />equals<br /> -->
@@ -355,6 +357,8 @@
 
       <button id="addFilter" type="button">Add Filter</button>
       <button id="applyFilters" type="button">Apply Filters</button>
+
+      <p id="warning">Invalid input</p>
 
       <table id="selectionTable" border="1"></table>
 
