@@ -7,6 +7,15 @@ const bodyParser = require("body-parser");
 
 // ----------------------------------------------------------
 
+router.get("/available-animals", async (req, res) => {
+  try {
+    const animals = await appService.getAvailableAnimals();
+    res.json({ rows: animals });
+  } catch (err) {
+    console.log("error getting available animals for adoption table");
+  }
+});
+
 router.get("/animals", async (req, res) => {
   try {
     const animals = await appService.getAnimals();
@@ -43,6 +52,24 @@ router.get("/applications", async (req, res) => {
   }
 });
 
+router.get("/top-donors", async (req, res) => {
+  try {
+    const donors = await appService.getTopDonors();
+    res.json({ rows: donors });
+  } catch (err) {
+    console.log("error getting available donors for top donors table");
+  }
+});
+
+router.get("/donors-attend-all-events", async (req, res) => {
+  try {
+    const donors = await appService.getDonorsWhoAttendAllEvents();
+    res.json({ rows: donors });
+  } catch (err) {
+    console.log("error getting donors who attended all events table");
+  }
+});
+
 router.put("/projection", async (req, res) => {
   try {
     const { table_name, attributes } = req.body;
@@ -62,17 +89,32 @@ router.put("/projection", async (req, res) => {
 router.post("/applications-submit", async (req, res) => {
   const { branchID, adopterID, animalID, applicationStatus, applicationDate } =
     req.body;
-  const updateResult = await appService.submitApplication(
-    branchID,
-    adopterID,
-    animalID,
-    applicationStatus,
-    applicationDate
-  );
-  if (updateResult) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ success: false });
+
+  // Sanitize status and date
+  const validStatuses = ["accepted", "rejected", "pending"];
+  if (!validStatuses.includes(applicationStatus.toLowerCase())) {
+    res.status(400).json({ success: false, error: "Application status must be one of 'Accepted', 'Rejected', or 'Pending'" });
+  }
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(applicationDate)) {
+    res.status(400).json({ success: false, error: "Invalid date format" });
+  }
+
+  try {
+    const updateResult = await appService.submitApplication(
+      branchID,
+      adopterID,
+      animalID,
+      applicationStatus,
+      applicationDate
+    );
+    if (updateResult) {
+      res.json({ success: true });
+    } else {
+      res.status(500).json({ success: false });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -80,15 +122,19 @@ router.post("/applications-submit", async (req, res) => {
 // REQUIRES branchID, adopterID, animalID in request body to correctly identify which row to remove
 router.delete("/applications-withdraw", async (req, res) => {
   const { branchID, adopterID, animalID } = req.body;
-  const updateResult = await appService.withdrawApplication(
-    branchID,
-    adopterID,
-    animalID
-  );
-  if (updateResult) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ success: false });
+  try {
+    const updateResult = await appService.withdrawApplication(
+      branchID,
+      adopterID,
+      animalID
+    );
+    if (updateResult.success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: updateResult.error });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -100,18 +146,34 @@ router.delete("/applications-withdraw", async (req, res) => {
 router.put("/applications-update", async (req, res) => {
   const { branchID, adopterID, animalID, applicationStatus, applicationDate } =
     req.body;
-  const updateResult = await appService.updateApplication(
-    branchID,
-    adopterID,
-    animalID,
-    applicationStatus,
-    applicationDate
-  );
-  if (updateResult) {
-    res.json({ success: true });
-  } else {
-    res.status(500).json({ success: false });
+
+  // Sanitize status and date
+  const validStatuses = ["accepted", "rejected", "pending"];
+  if (!validStatuses.includes(applicationStatus.toLowerCase())) {
+    res.status(400).json({ success: false, error: "Application status must be one of 'Accepted', 'Rejected', or 'Pending'" });
   }
+  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  if (!dateRegex.test(applicationDate)) {
+    res.status(400).json({ success: false, error: "Invalid date format" });
+  }
+
+  try {
+    const updateResult = await appService.updateApplication(
+      branchID,
+      adopterID,
+      animalID,
+      applicationStatus,
+      applicationDate
+    );
+    if (updateResult.success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: updateResult.error });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+
 });
 
 // API endpoints

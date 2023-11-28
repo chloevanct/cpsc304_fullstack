@@ -36,6 +36,33 @@ async function checkDbConnection() {
     });
 }
 
+/**
+ * ANIMALS TABLE -----------------------------------------------------------------------------------------------------------
+ */
+// fetch and display available animals for adoption (nested aggregation with group by query)
+async function fetchAndDisplayAvailableAnimals() {
+  const tableElement = document.getElementById("animalsAvailableTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/available-animals", {
+    method: "GET",
+  });
+  const animalsData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  animalsData.rows.forEach(animal => {
+    const row = tableBody.insertRow();
+    animal.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
 // Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
 async function fetchAndDisplayAnimals() {
   const tableElement = document.getElementById("animaltable");
@@ -91,6 +118,158 @@ function getVaccinationCount(animalID, vaccinationTable) {
   }
   return 0;
 }
+
+
+/**
+ * APPLIES TABLE -----------------------------------------------------------------------------------------------------------
+ */
+// Fetches data on animals (AnimalAdmits, AnimalInfo, Vaccinations)
+async function fetchAndDisplayApplications() {
+  const tableElement = document.getElementById("applicationsTable");
+  const tableBody = tableElement.querySelector("tbody");
+  const applicationTable = await getApplications();
+
+  // Always clear old, already fetched data before new fetching process.
+  if (tableBody) {
+    tableBody.innerHTML = "";
+  }
+
+  applicationTable.forEach((application) => {
+    const row = tableBody.insertRow();
+    application.forEach((field, index) => {
+      const cell = row.insertCell(index);
+      cell.textContent = field;
+    });
+  });
+}
+
+async function getApplications() {
+  const applicationsResponse = await fetch("/applications", {
+    method: "GET",
+  });
+  const animalResponseData = await applicationsResponse.json();
+  const animalTable = animalResponseData["rows"];
+
+  return animalTable;
+}
+
+// Inserts new records into the applies table.
+async function insertApplication(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("insertBranchID").value;
+  const adopterIDValue = document.getElementById("insertAdopterID").value;
+  const animalIDValue = document.getElementById("insertAnimalID").value;
+  const applicationStatusValue = document.getElementById("insertApplicationStatus").value;
+  const applicationDateValue = document.getElementById("insertApplicationDate").value;
+
+  const response = await fetch("/applications-submit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      adopterID: adopterIDValue,
+      animalID: animalIDValue,
+      applicationStatus: applicationStatusValue.charAt(0).toUpperCase() + applicationStatusValue.slice(1).toLowerCase(),
+      applicationDate: applicationDateValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("insertApplicationResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Data inserted successfully!";
+    fetchTableData();
+  } else {
+    if (responseData.error.includes("ORA-00001")) {
+      // Unique constraint violation
+      messageElement.textContent = "Error! Cannot insert a duplicate application.";
+    } else if (responseData.error.includes("ORA-01400")) {
+      // Empty status/date fields
+      messageElement.textContent = "Error! Please enter an application Status and Date";
+    } else {
+      messageElement.textContent = "Error inserting data! " + responseData.error;
+    }
+  }
+}
+
+// Deletes an application from the Applications Table
+async function deleteApplication(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("deleteBranchID").value;
+  const adopterIDValue = document.getElementById("deleteAdopterID").value;
+  const animalIDValue = document.getElementById("deleteAnimalID").value;
+
+  const response = await fetch("/applications-withdraw", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      adopterID: adopterIDValue,
+      animalID: animalIDValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("deleteApplicationResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Application deleted successfully!";
+    fetchTableData();
+  } else {
+    messageElement.textContent = "Error inserting data! " + responseData.error;
+  }
+}
+
+// Updates status/date in the Applications table.
+async function updateApplication(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("updateBranchID").value;
+  const adopterIDValue = document.getElementById("updateAdopterID").value;
+  const animalIDValue = document.getElementById("updateAnimalID").value;
+  const newApplicationStatusValue = document.getElementById("updateApplicationStatus").value;
+  const newApplicationDateValue = document.getElementById("updateApplicationDate").value;
+
+  const response = await fetch("/applications-update", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      adopterID: adopterIDValue,
+      animalID: animalIDValue,
+      applicationStatus: newApplicationStatusValue.charAt(0).toUpperCase() + newApplicationStatusValue.slice(1).toLowerCase(),
+      applicationDate: newApplicationDateValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("updateApplicationResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Name updated successfully!";
+    fetchTableData();
+  } else {
+    if (responseData.error.includes("ORA-01400")) {
+      // Empty status/date fields
+      messageElement.textContent = "Error! Please enter an application Status and Date";
+    } else {
+      messageElement.textContent = "Error inserting data! " + responseData.error;
+    }
+  }
+}
+
+/**
+ * DEMOTABLE -----------------------------------------------------------------------------------------------------------
+ */
 
 // Fetches data from the demotable and displays it.
 async function fetchAndDisplayUsers() {
@@ -159,7 +338,7 @@ async function insertDemotable(event) {
     messageElement.textContent = "Data inserted successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error inserting data!";
+    messageElement.textContent = "Error inserting application!";
   }
 }
 
@@ -188,7 +367,7 @@ async function updateNameDemotable(event) {
     messageElement.textContent = "Name updated successfully!";
     fetchTableData();
   } else {
-    messageElement.textContent = "Error updating name!";
+    messageElement.textContent = "Error updating application!";
   }
 }
 
@@ -275,6 +454,56 @@ function fillDropdownLists() {
   });
 }
 
+// fetch and display top donors (aggregation with having query)
+async function fetchAndDisplayTopDonors() {
+  const tableElement = document.getElementById("topDonorsTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/top-donors", {
+    method: "GET",
+  });
+  const donorData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  donorData.rows.forEach(donor => {
+    const row = tableBody.insertRow();
+    donor.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+// fetch and display donors who've attend all events (divison query)
+async function fetchAndDisplayDonorsWhoAttendedAllEvents() {
+  const tableElement = document.getElementById("donorsAttendedAllEventsTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/donors-attend-all-events", {
+    method: "GET",
+  });
+  const donorData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  donorData.rows.forEach(donor => {
+    const row = tableBody.insertRow();
+    donor.forEach(value => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+
+
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
 // Add or remove event listeners based on the desired functionalities.
@@ -282,6 +511,18 @@ window.onload = function () {
   checkDbConnection();
   fetchTableData();
   fillDropdownLists();
+  document
+    .getElementById("insertApplicationsTable")
+    .addEventListener("submit", insertApplication);
+  document
+    .getElementById("deleteApplicationsTable")
+    .addEventListener("submit", deleteApplication);
+  document
+    .getElementById("updateApplicationsTable")
+    .addEventListener("submit", updateApplication);
+  document
+  .getElementById("fetchAvailableAnimals")
+  .addEventListener("click", fetchAndDisplayAvailableAnimals);
   document
     .getElementById("resetDemotable")
     .addEventListener("click", resetDemotable);
@@ -300,8 +541,13 @@ window.onload = function () {
   document
     .getElementById("applyFilters")
     .addEventListener("click", displayEventsTable);
-
   document.getElementById("addFilter").addEventListener("click", addFilterRow);
+    .getElementById("displayTopDonors")
+    .addEventListener("click", fetchAndDisplayTopDonors);
+  document 
+    .getElementById("displayDonorsAttendedEveryEvent")
+    .addEventListener("click", fetchAndDisplayDonorsWhoAttendedAllEvents)
+
 };
 
 async function displayProjectionTable() {
@@ -397,7 +643,7 @@ function displayEventsTable() {
 // You can invoke this after any table-modifying operation to keep consistency.
 function fetchTableData() {
   fetchAndDisplayAnimals();
-
+  fetchAndDisplayApplications();
   // legacy
   fetchAndDisplayUsers();
 }

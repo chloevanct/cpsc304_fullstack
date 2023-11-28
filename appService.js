@@ -38,6 +38,18 @@ async function withOracleDB(action) {
   }
 }
 
+async function getAvailableAnimals() {
+  const query =
+    "SELECT A.animalID, A.animalName, A.age, A.breed, A.branchID FROM AnimalAdmits A WHERE A.animalID NOT IN (SELECT P.animalID FROM Applies P WHERE P.applicationStatus = 'Accepted') GROUP BY A.animalID, A.animalName, A.age, A.breed, A.branchID";
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function getAnimals() {
   const query =
     // "SELECT DISTINCT a.animalID, a.animalName, a.age, i.species, a.breed, a.branchID FROM AnimalInfo i JOIN AnimalAdmits a ON i.breed = a.breed WHERE NOT EXISTS (SELECT 1 FROM Applies ap WHERE a.animalID = ap.animalID AND ap.applicationStatus = 'Accepted')";
@@ -125,6 +137,30 @@ async function getApplications() {
   });
 }
 
+async function getTopDonors() {
+  const query =
+  "SELECT donorID, SUM(amount) AS total_donation FROM Donates GROUP BY donorID HAVING SUM(amount) > 1000 ORDER BY total_donation DESC";  
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function getDonorsWhoAttendAllEvents() {
+  const query =
+  "SELECT D.donorID FROM Donor D WHERE NOT EXISTS (SELECT E.eventLocation, E.eventDate, E.title FROM Events E WHERE NOT EXISTS (SELECT A.donorID FROM Attends A WHERE A.donorID = D.donorID AND A.attendsLocation = E.eventLocation AND A.attendsDate = E.eventDate AND A.title = E.title))";  
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(query);
+    console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
 async function submitApplication(
   branchID,
   adopterID,
@@ -140,8 +176,8 @@ async function submitApplication(
       { autoCommit: true }
     );
     return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
+  }).catch((err) => {
+    throw err;
   });
 }
 
@@ -153,9 +189,13 @@ async function withdrawApplication(branchID, adopterID, animalID) {
       { branchID, adopterID, animalID },
       { autoCommit: true }
     );
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
+    if (result.rowsAffected && result.rowsAffected > 0) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Could not find matching application." };
+    }
+  }).catch((err) => {
+    throw err;
   });
 }
 
@@ -175,9 +215,13 @@ async function updateApplication(
       { branchID, adopterID, animalID, applicationStatus, applicationDate },
       { autoCommit: true }
     );
-    return result.rowsAffected && result.rowsAffected > 0;
-  }).catch(() => {
-    return false;
+    if (result.rowsAffected && result.rowsAffected > 0) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Could not find matching application." };
+    }
+  }).catch((err) => {
+    throw err;
   });
 }
 
@@ -294,4 +338,7 @@ module.exports = {
   submitApplication,
   withdrawApplication,
   updateApplication,
+  getAvailableAnimals,
+  getTopDonors,
+  getDonorsWhoAttendAllEvents
 };
