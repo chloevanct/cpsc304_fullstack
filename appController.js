@@ -34,14 +34,14 @@ router.get("/vaccinations", async (req, res) => {
   }
 });
 
-router.get("/events", async (req, res) => {
-  try {
-    const events = await appService.getEvents();
-    res.json({ rows: events });
-  } catch (err) {
-    console.log("error getting events");
-  }
-});
+// router.get("/events", async (req, res) => {
+//   try {
+//     const events = await appService.getEvents();
+//     res.json({ rows: events });
+//   } catch (err) {
+//     console.log("error getting events");
+//   }
+// });
 
 router.get("/applications", async (req, res) => {
   try {
@@ -70,6 +70,19 @@ router.get("/donors-attend-all-events", async (req, res) => {
   }
 });
 
+router.put("/events", async (req, res) => {
+  try {
+    const { where } = req.body;
+    // console.log(where);
+    const table = await appService.getEvents(where);
+    console.log(table);
+    res.json(table);
+  } catch (err) {
+    console.log("error processing projection query:", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 router.put("/projection", async (req, res) => {
   try {
     const { table_name, attributes } = req.body;
@@ -93,7 +106,11 @@ router.post("/applications-submit", async (req, res) => {
   // Sanitize status and date
   const validStatuses = ["accepted", "rejected", "pending"];
   if (!validStatuses.includes(applicationStatus.toLowerCase())) {
-    res.status(400).json({ success: false, error: "Application status must be one of 'Accepted', 'Rejected', or 'Pending'" });
+    res.status(400).json({
+      success: false,
+      error:
+        "Application status must be one of 'Accepted', 'Rejected', or 'Pending'",
+    });
   }
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(applicationDate)) {
@@ -150,7 +167,11 @@ router.put("/applications-update", async (req, res) => {
   // Sanitize status and date
   const validStatuses = ["accepted", "rejected", "pending"];
   if (!validStatuses.includes(applicationStatus.toLowerCase())) {
-    res.status(400).json({ success: false, error: "Application status must be one of 'Accepted', 'Rejected', or 'Pending'" });
+    res.status(400).json({
+      success: false,
+      error:
+        "Application status must be one of 'Accepted', 'Rejected', or 'Pending'",
+    });
   }
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(applicationDate)) {
@@ -173,7 +194,6 @@ router.put("/applications-update", async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
   }
-
 });
 
 // API endpoints

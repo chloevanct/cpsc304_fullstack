@@ -103,12 +103,13 @@ async function getVaccinationCounts() {
   });
 }
 
-async function getEvents() {
+async function getEvents(whereQuery) {
+  console.log("SELECT * FROM Events " + whereQuery);
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(
-      "SELECT title, eventLocation, eventDate FROM Events"
+      "SELECT * FROM Events " + whereQuery
     );
-    console.log(result);
+
     return result.rows;
   }).catch(() => {
     return [];
@@ -130,7 +131,7 @@ async function getTableNames() {
 async function getApplications() {
   return await withOracleDB(async (connection) => {
     const result = await connection.execute("SELECT * FROM Applies");
-    console.log(result);
+    // console.log(result);
     return result.rows;
   }).catch(() => {
     return [];
@@ -139,7 +140,7 @@ async function getApplications() {
 
 async function getTopDonors() {
   const query =
-  "SELECT donorID, SUM(amount) AS total_donation FROM Donates GROUP BY donorID HAVING SUM(amount) > 1000 ORDER BY total_donation DESC";  
+    "SELECT donorID, SUM(amount) AS total_donation FROM Donates GROUP BY donorID HAVING SUM(amount) > 1000 ORDER BY total_donation DESC";
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(query);
     // console.log(result);
@@ -151,10 +152,10 @@ async function getTopDonors() {
 
 async function getDonorsWhoAttendAllEvents() {
   const query =
-  "SELECT D.donorID FROM Donor D WHERE NOT EXISTS (SELECT E.eventLocation, E.eventDate, E.title FROM Events E WHERE NOT EXISTS (SELECT A.donorID FROM Attends A WHERE A.donorID = D.donorID AND A.attendsLocation = E.eventLocation AND A.attendsDate = E.eventDate AND A.title = E.title))";  
+    "SELECT D.donorID FROM Donor D WHERE NOT EXISTS (SELECT E.eventLocation, E.eventDate, E.title FROM Events E WHERE NOT EXISTS (SELECT A.donorID FROM Attends A WHERE A.donorID = D.donorID AND A.attendsLocation = E.eventLocation AND A.attendsDate = E.eventDate AND A.title = E.title))";
   return await withOracleDB(async (connection) => {
     const result = await connection.execute(query);
-    console.log(result);
+    // console.log(result);
     return result.rows;
   }).catch(() => {
     return [];
@@ -340,5 +341,5 @@ module.exports = {
   updateApplication,
   getAvailableAnimals,
   getTopDonors,
-  getDonorsWhoAttendAllEvents
+  getDonorsWhoAttendAllEvents,
 };
