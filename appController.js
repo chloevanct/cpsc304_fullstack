@@ -16,6 +16,15 @@ router.get("/available-animals", async (req, res) => {
   }
 });
 
+router.get("/count-unadopted-animals-by-breed", async (req, res) => {
+  try {
+    const animals = await appService.getUnadoptedCountByBreed();
+    res.json({ rows: animals });
+  } catch (err) {
+    console.log("error getting count of unadopted animals by breed table");
+  }
+});
+
 router.get("/animals", async (req, res) => {
   try {
     const animals = await appService.getAnimals();
