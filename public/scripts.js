@@ -54,9 +54,9 @@ async function fetchAndDisplayAvailableAnimals() {
   tableBody.innerHTML = "";
 
   // populate table with new data
-  animalsData.rows.forEach(animal => {
+  animalsData.rows.forEach((animal) => {
     const row = tableBody.insertRow();
-    animal.forEach(value => {
+    animal.forEach((value) => {
       const cell = row.insertCell();
       cell.textContent = value;
     });
@@ -119,7 +119,6 @@ function getVaccinationCount(animalID, vaccinationTable) {
   return 0;
 }
 
-
 /**
  * APPLIES TABLE -----------------------------------------------------------------------------------------------------------
  */
@@ -160,8 +159,12 @@ async function insertApplication(event) {
   const branchIDValue = document.getElementById("insertBranchID").value;
   const adopterIDValue = document.getElementById("insertAdopterID").value;
   const animalIDValue = document.getElementById("insertAnimalID").value;
-  const applicationStatusValue = document.getElementById("insertApplicationStatus").value;
-  const applicationDateValue = document.getElementById("insertApplicationDate").value;
+  const applicationStatusValue = document.getElementById(
+    "insertApplicationStatus"
+  ).value;
+  const applicationDateValue = document.getElementById(
+    "insertApplicationDate"
+  ).value;
 
   const response = await fetch("/applications-submit", {
     method: "POST",
@@ -172,7 +175,9 @@ async function insertApplication(event) {
       branchID: branchIDValue,
       adopterID: adopterIDValue,
       animalID: animalIDValue,
-      applicationStatus: applicationStatusValue.charAt(0).toUpperCase() + applicationStatusValue.slice(1).toLowerCase(),
+      applicationStatus:
+        applicationStatusValue.charAt(0).toUpperCase() +
+        applicationStatusValue.slice(1).toLowerCase(),
       applicationDate: applicationDateValue,
     }),
   });
@@ -186,12 +191,15 @@ async function insertApplication(event) {
   } else {
     if (responseData.error.includes("ORA-00001")) {
       // Unique constraint violation
-      messageElement.textContent = "Error! Cannot insert a duplicate application.";
+      messageElement.textContent =
+        "Error! Cannot insert a duplicate application.";
     } else if (responseData.error.includes("ORA-01400")) {
       // Empty status/date fields
-      messageElement.textContent = "Error! Please enter an application Status and Date";
+      messageElement.textContent =
+        "Error! Please enter an application Status and Date";
     } else {
-      messageElement.textContent = "Error inserting data! " + responseData.error;
+      messageElement.textContent =
+        "Error inserting data! " + responseData.error;
     }
   }
 }
@@ -234,8 +242,12 @@ async function updateApplication(event) {
   const branchIDValue = document.getElementById("updateBranchID").value;
   const adopterIDValue = document.getElementById("updateAdopterID").value;
   const animalIDValue = document.getElementById("updateAnimalID").value;
-  const newApplicationStatusValue = document.getElementById("updateApplicationStatus").value;
-  const newApplicationDateValue = document.getElementById("updateApplicationDate").value;
+  const newApplicationStatusValue = document.getElementById(
+    "updateApplicationStatus"
+  ).value;
+  const newApplicationDateValue = document.getElementById(
+    "updateApplicationDate"
+  ).value;
 
   const response = await fetch("/applications-update", {
     method: "PUT",
@@ -246,7 +258,9 @@ async function updateApplication(event) {
       branchID: branchIDValue,
       adopterID: adopterIDValue,
       animalID: animalIDValue,
-      applicationStatus: newApplicationStatusValue.charAt(0).toUpperCase() + newApplicationStatusValue.slice(1).toLowerCase(),
+      applicationStatus:
+        newApplicationStatusValue.charAt(0).toUpperCase() +
+        newApplicationStatusValue.slice(1).toLowerCase(),
       applicationDate: newApplicationDateValue,
     }),
   });
@@ -260,9 +274,11 @@ async function updateApplication(event) {
   } else {
     if (responseData.error.includes("ORA-01400")) {
       // Empty status/date fields
-      messageElement.textContent = "Error! Please enter an application Status and Date";
+      messageElement.textContent =
+        "Error! Please enter an application Status and Date";
     } else {
-      messageElement.textContent = "Error inserting data! " + responseData.error;
+      messageElement.textContent =
+        "Error inserting data! " + responseData.error;
     }
   }
 }
@@ -469,9 +485,9 @@ async function fetchAndDisplayTopDonors() {
   tableBody.innerHTML = "";
 
   // populate table with new data
-  donorData.rows.forEach(donor => {
+  donorData.rows.forEach((donor) => {
     const row = tableBody.insertRow();
-    donor.forEach(value => {
+    donor.forEach((value) => {
       const cell = row.insertCell();
       cell.textContent = value;
     });
@@ -493,16 +509,14 @@ async function fetchAndDisplayDonorsWhoAttendedAllEvents() {
   tableBody.innerHTML = "";
 
   // populate table with new data
-  donorData.rows.forEach(donor => {
+  donorData.rows.forEach((donor) => {
     const row = tableBody.insertRow();
-    donor.forEach(value => {
+    donor.forEach((value) => {
       const cell = row.insertCell();
       cell.textContent = value;
     });
   });
 }
-
-
 
 // ---------------------------------------------------------------
 // Initializes the webpage functionalities.
@@ -521,8 +535,8 @@ window.onload = function () {
     .getElementById("updateApplicationsTable")
     .addEventListener("submit", updateApplication);
   document
-  .getElementById("fetchAvailableAnimals")
-  .addEventListener("click", fetchAndDisplayAvailableAnimals);
+    .getElementById("fetchAvailableAnimals")
+    .addEventListener("click", fetchAndDisplayAvailableAnimals);
   document
     .getElementById("resetDemotable")
     .addEventListener("click", resetDemotable);
@@ -542,12 +556,12 @@ window.onload = function () {
     .getElementById("applyFilters")
     .addEventListener("click", displayEventsTable);
   document.getElementById("addFilter").addEventListener("click", addFilterRow);
+  document
     .getElementById("displayTopDonors")
     .addEventListener("click", fetchAndDisplayTopDonors);
-  document 
+  document
     .getElementById("displayDonorsAttendedEveryEvent")
-    .addEventListener("click", fetchAndDisplayDonorsWhoAttendedAllEvents)
-
+    .addEventListener("click", fetchAndDisplayDonorsWhoAttendedAllEvents);
 };
 
 async function displayProjectionTable() {
