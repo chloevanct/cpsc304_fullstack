@@ -39,13 +39,37 @@ async function checkDbConnection() {
 /**
  * ANIMALS TABLE -----------------------------------------------------------------------------------------------------------
  */
-// fetch and display available animals for adoption (nested aggregation with group by query)
+// fetch and display available animals for adoption (nested with group by query)
 async function fetchAndDisplayAvailableAnimals() {
   const tableElement = document.getElementById("animalsAvailableTable");
   const tableBody = tableElement.querySelector("tbody");
 
   // fetch data from backend
   const response = await fetch("/available-animals", {
+    method: "GET",
+  });
+  const animalsData = await response.json();
+
+  // always clear old, already fetched data before new fetching process.
+  tableBody.innerHTML = "";
+
+  // populate table with new data
+  animalsData.rows.forEach((animal) => {
+    const row = tableBody.insertRow();
+    animal.forEach((value) => {
+      const cell = row.insertCell();
+      cell.textContent = value;
+    });
+  });
+}
+
+// fetch and display count of animals for adoption by breed (nested aggregation with group by query)
+async function fetchAndDisplayCountOfUnadoptedAnimalsByBreed() {
+  const tableElement = document.getElementById("unadoptedAnimalCountByBreedTable");
+  const tableBody = tableElement.querySelector("tbody");
+
+  // fetch data from backend
+  const response = await fetch("/count-unadopted-animals-by-breed", {
     method: "GET",
   });
   const animalsData = await response.json();
@@ -562,6 +586,9 @@ window.onload = function () {
   document
     .getElementById("displayDonorsAttendedEveryEvent")
     .addEventListener("click", fetchAndDisplayDonorsWhoAttendedAllEvents);
+  document
+    .getElementById("fetchUnadoptedCountForEachBreed")
+    .addEventListener("click", fetchAndDisplayCountOfUnadoptedAnimalsByBreed)
 };
 
 async function displayProjectionTable() {
