@@ -221,6 +221,14 @@ async function insertApplication(event) {
       // Empty status/date fields
       messageElement.textContent =
         "Error! Please enter an application Status and Date";
+    } else if (responseData.error.includes("ORA-02291")) {
+      if (responseData.error.includes("C002860747")) {
+          messageElement.textContent = "Error! The given branchID does not exist";
+      } else if (responseData.error.includes("C002860748")) {
+          messageElement.textContent = "Error! The given adopterID does not exist";
+      } else if (responseData.error.includes("C002860749")) {
+          messageElement.textContent = "Error! The given animalID does not exist";
+      }
     } else {
       messageElement.textContent =
         "Error inserting data! " + responseData.error;
@@ -293,7 +301,7 @@ async function updateApplication(event) {
   const messageElement = document.getElementById("updateApplicationResultMsg");
 
   if (responseData.success) {
-    messageElement.textContent = "Name updated successfully!";
+    messageElement.textContent = "Application updated successfully!";
     fetchTableData();
   } else {
     if (responseData.error.includes("ORA-01400")) {
