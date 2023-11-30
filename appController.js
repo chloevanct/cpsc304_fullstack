@@ -105,6 +105,80 @@ router.put("/projection", async (req, res) => {
   }
 });
 
+router.get("/shelters", async (req, res) => {
+  try {
+    const applications = await appService.getShelters();
+    res.json({ rows: applications });
+  } catch (err) {
+    console.log("error getting shelter table");
+  }
+});
+
+// Endpoint for UPDATING an entry in the Shelters table
+// REQUIRES branchID to correctly identify which row to update
+//   new (phoneNum, shelterAddress) must be unique or error is thrown
+
+router.put("/shelters-update", async (req, res) => {
+  const { branchID, phoneNum, shelterAddress } =
+    req.body;
+
+  // Sanitize phoneNum and date
+  const phoneNumRegex = /^\d{10}$/;
+  if (!phoneNumRegex.test(phoneNum)) {
+    res.status(400).json({
+      success: false,
+      error:
+        "Phone number must be 10 digits",
+    });
+  }
+
+  const addressRegex = /^\d+\s+\w+\s+\d+\w+\s+[a-zA-Z]+\s*,\s+[a-zA-Z]+\s*,\s*[A-Z]{2}\s*[A-Z0-9]{6}$/;
+  if (!addressRegex.test(shelterAddress)) {
+    res.status(400).json({ success: false, error: "Address must be in the form 123 W 10th avenue, Vancouver, BC V6E9TS" });
+  }
+
+  try {
+    const updateResult = await appService.updateShelter(
+      branchID,
+      phoneNum,
+      shelterAddress
+    );
+    if (updateResult.success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: updateResult.error });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+router.get("/adopters", async (req, res) => {
+  try {
+    const adopters = await appService.getAdopters();
+    res.json({ rows: adopters });
+  } catch (err) {
+    console.log("error getting shelter table");
+  }
+});
+
+
+router.delete("/adopters-delete", async (req, res) => {
+  const { adopterID } = req.body;
+  try {
+    const updateResult = await appService.removeAdopters(
+      adopterID
+    );
+    if (updateResult.success) {
+      res.json({ success: true });
+    } else {
+      res.status(404).json({ success: false, error: updateResult.error });
+    }
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // Endpoint for INSERTING an entry in the Applies table
 // REQUIRES branchID, adopterID, animalID, applicationStatus and applicationDate in request body
 // EXPECTS applicationDate to be in the form "YYYY-MM-DD"
