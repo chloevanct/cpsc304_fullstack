@@ -12,6 +12,8 @@
  *
  */
 
+//const { updateShelter } = require("../appService");
+
 // This function checks the database connection and updates its status on the frontend.
 async function checkDbConnection() {
   const statusElem = document.getElementById("dbStatus");
@@ -315,6 +317,135 @@ async function updateApplication(event) {
   }
 }
 
+async function fetchAndDisplayShelters() {
+  const tableElement = document.getElementById("sheltersTable");
+  const tableBody = tableElement.querySelector("tbody");
+  const applicationTable = await getShelters();
+
+  // Always clear old, already fetched data before new fetching process.
+  if (tableBody) {
+    tableBody.innerHTML = "";
+  }
+
+  applicationTable.forEach((application) => {
+    const row = tableBody.insertRow();
+    application.forEach((field, index) => {
+      const cell = row.insertCell(index);
+      cell.textContent = field;
+    });
+  });
+}
+
+async function getShelters() {
+  const applicationsResponse = await fetch("/shelters", {
+    method: "GET",
+  });
+  const shelterResponseData = await applicationsResponse.json();
+  const shelterTable = shelterResponseData["rows"];
+
+  return shelterTable;
+}
+
+// Updates phonenum/address in the Shelters table.
+async function updateShelter(event) {
+  event.preventDefault();
+
+  const branchIDValue = document.getElementById("updateBranchID").value;
+  const newPhoneNUmValue = document.getElementById(
+    "updateShelterPhoneNum"
+  ).value;
+  const newShelterAddressValue = document.getElementById(
+    "updateShelterAddress"
+  ).value;
+
+  const response = await fetch("/shelters-update", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      branchID: branchIDValue,
+      phoneNum: newPhoneNUmValue,
+      shelterAddress: newShelterAddressValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("updateShelterResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Shelter updated successfully!";
+    fetchTableData();
+  } else {
+    if (responseData.error.includes("ORA-01400")) {
+      // Empty phoneNum/address fields
+      messageElement.textContent =
+        "Error! Please enter an application phoneNum and Address";
+    } else if (responseData.error.includes("ORA-00001")) {
+      messageElement.textContent =
+        "Error! The given phoneNum and address combination are already assigned to a shelter";
+    } else {
+      messageElement.textContent =
+        "Error updating data! " + responseData.error;
+    }
+  }
+}
+
+async function fetchAndDisplayAdopters() {
+  const tableElement = document.getElementById("adoptersTable");
+  const tableBody = tableElement.querySelector("tbody");
+  const adoptersTable = await getAdopters();
+
+  // Always clear old, already fetched data before new fetching process.
+  if (tableBody) {
+    tableBody.innerHTML = "";
+  }
+
+  adoptersTable.forEach((application) => {
+    const row = tableBody.insertRow();
+    application.forEach((field, index) => {
+      const cell = row.insertCell(index);
+      cell.textContent = field;
+    });
+  });
+}
+
+async function getAdopters() {
+  const applicationsResponse = await fetch("/adopters", {
+    method: "GET",
+  });
+  const adopterResponseData = await applicationsResponse.json();
+  const adopterTable = adopterResponseData["rows"];
+
+  return adopterTable;
+}
+
+async function removeAdopters(event) {
+  event.preventDefault();
+
+  const adopterIDValue = document.getElementById("deleteAdopterID").value;
+
+  const response = await fetch("/adopters-delete", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      adopterID: adopterIDValue,
+    }),
+  });
+
+  const responseData = await response.json();
+  const messageElement = document.getElementById("deleteAdopterResultMsg");
+
+  if (responseData.success) {
+    messageElement.textContent = "Adopter deleted successfully!";
+    fetchTableData();
+  } else {
+    messageElement.textContent = "Error deleting data! " + responseData.error;
+  }
+}
+
 /**
  * DEMOTABLE -----------------------------------------------------------------------------------------------------------
  */
@@ -567,8 +698,14 @@ window.onload = function () {
     .getElementById("updateApplicationsTable")
     .addEventListener("submit", updateApplication);
   document
+    .getElementById("updateSheltersTable")
+    .addEventListener("submit", updateShelter);
+  document
     .getElementById("fetchAvailableAnimals")
     .addEventListener("click", fetchAndDisplayAvailableAnimals);
+  document
+    .getElementById("deleteAdopter")
+    .addEventListener("submit", removeAdopters);
   // document
   //   .getElementById("resetDemotable")
   //   .addEventListener("click", resetDemotable);
@@ -802,6 +939,8 @@ function getSelectedInputs() {
 function fetchTableData() {
   fetchAndDisplayAnimals();
   fetchAndDisplayApplications();
+  fetchAndDisplayShelters();
+  fetchAndDisplayAdopters();
   // legacy
   // fetchAndDisplayUsers();
 }

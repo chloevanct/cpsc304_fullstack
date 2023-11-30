@@ -104,7 +104,95 @@
     <!-- ========================================================================= -->
 
     <!-- ========================================================================= -->
+    <h2>Animal Shelters</h2>
+    <table id="sheltersTable" border="1">
+      <thead>
+        <tr>
+          <th>branchID</th>
+          <th>phoneNum</th>
+          <th>shelterAddress</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
+    <div>
+      <h2>Update Shelters</h2>
+      <form id="updateSheltersTable">
+        branchID:
+        <input
+          type="text"
+          id="updateBranchID"
+          placeholder="Enter branchID"
+          maxlength="8"
+          required
+        />
+        <br /><br />
+        phoneNum:
+        <input
+          type="text"
+          id="updateShelterPhoneNum"
+          placeholder="Enter phoneNum"
+          maxlength="10"
+          required
+        />
+        <br /><br />
+        shelterAddress:
+        <input
+          type="text"
+          id="updateShelterAddress"
+          placeholder="Enter shelterAddress"
+          maxlength="200"
+          required
+        />
+        <br /><br />
+        <button type="submit">update</button> <br />
+      </form>
+      <div id="updateShelterResultMsg"></div>
+    </div>
+
+    <br />
+    <hr />
+    <br />
+    <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
+    <h2>Adopters</h2>
+    <table id="adoptersTable" border="1">
+      <thead>
+        <tr>
+          <th>adopterID</th>
+          <th>lastName</th>
+          <th>firstName</th>
+          <th>phoneNum</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div>
+      <h2>Remove Adopters</h2>
+      <form id="deleteAdopter">
+        adopterID:
+        <input
+          type="text"
+          id="deleteAdopterID"
+          placeholder="Enter adopterID"
+          maxlength="8"
+          required
+        />
+        <br /><br />
+        <button type="submit">update</button> <br />
+      </form>
+      <div id="deleteAdopterResultMsg"></div>
+    </div>
+
+    <br />
+    <hr />
+    <br />
+    <!-- ========================================================================= -->
+
+    <!-- ========================================================================= -->
     <h2>Applications</h2>
     <table id="applicationsTable" border="1">
       <thead>

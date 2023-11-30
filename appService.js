@@ -336,6 +336,68 @@ async function countDemotable() {
   });
 }
 
+async function getShelters() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute("SELECT * FROM Shelter");
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function updateShelter(
+  branchID,
+  phoneNum,
+  shelterAddress
+) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `UPDATE Shelter 
+             SET phoneNum = :phoneNum,
+             shelterAddress = :shelterAddress
+             WHERE branchID = :branchID`,
+      { branchID, phoneNum, shelterAddress },
+      { autoCommit: true }
+    );
+    if (result.rowsAffected && result.rowsAffected > 0) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Could not find matching shelter." };
+    }
+  }).catch((err) => {
+    throw err;
+  });
+}
+
+async function getAdopters() {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute("SELECT * FROM Adopters");
+    // console.log(result);
+    return result.rows;
+  }).catch(() => {
+    return [];
+  });
+}
+
+async function removeAdopters(adopterID) {
+  return await withOracleDB(async (connection) => {
+    const result = await connection.execute(
+      `DELETE FROM Adopters 
+             WHERE adopterID = :adopterID`,
+      { adopterID },
+      { autoCommit: true }
+    );
+    if (result.rowsAffected && result.rowsAffected > 0) {
+      return { success: true };
+    } else {
+      return { success: false, error: "Could not find matching adopter." };
+    }
+  }).catch((err) => {
+    throw err;
+  });
+}
+
 module.exports = {
   testOracleConnection,
   fetchDemotableFromDb,
@@ -354,5 +416,9 @@ module.exports = {
   getAvailableAnimals,
   getTopDonors,
   getDonorsWhoAttendAllEvents,
-  getUnadoptedCountByBreed
+  getUnadoptedCountByBreed,
+  getShelters,
+  updateShelter,
+  getAdopters,
+  removeAdopters
 };
