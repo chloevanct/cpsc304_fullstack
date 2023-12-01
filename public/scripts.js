@@ -224,11 +224,11 @@ async function insertApplication(event) {
       messageElement.textContent =
         "Error! Please enter an application Status and Date";
     } else if (responseData.error.includes("ORA-02291")) {
-      if (responseData.error.includes("C002860747")) {
+      if (responseData.error.includes("C002860747") || responseData.error.includes("C003135695")) {
           messageElement.textContent = "Error! The given branchID does not exist";
-      } else if (responseData.error.includes("C002860748")) {
+      } else if (responseData.error.includes("C002860748") || responseData.error.includes("C003135696")) {
           messageElement.textContent = "Error! The given adopterID does not exist";
-      } else if (responseData.error.includes("C002860749")) {
+      } else if (responseData.error.includes("C002860749") || responseData.error.includes("C003135697")) {
           messageElement.textContent = "Error! The given animalID does not exist";
       }
     } else {

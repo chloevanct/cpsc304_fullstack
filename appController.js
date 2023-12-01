@@ -130,11 +130,13 @@ router.put("/shelters-update", async (req, res) => {
       error:
         "Phone number must be 10 digits",
     });
+    return;
   }
 
   const addressRegex = /^\d+\s+\w+\s+\d+\w+\s+[a-zA-Z]+\s*,\s+[a-zA-Z]+\s*,\s*[A-Z]{2}\s*[A-Z0-9]{6}$/;
   if (!addressRegex.test(shelterAddress)) {
     res.status(400).json({ success: false, error: "Address must be in the form 123 W 10th avenue, Vancouver, BC V6E9TS" });
+    return;
   }
 
   try {
@@ -198,6 +200,7 @@ router.post("/applications-submit", async (req, res) => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(applicationDate)) {
     res.status(400).json({ success: false, error: "Invalid date format" });
+    return;
   }
 
   try {
@@ -259,6 +262,7 @@ router.put("/applications-update", async (req, res) => {
   const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
   if (!dateRegex.test(applicationDate)) {
     res.status(400).json({ success: false, error: "Invalid date format" });
+    return;
   }
 
   try {
